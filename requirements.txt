@@ -1,0 +1,19 @@
+# --- Web framework ---
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.34,<1.0
+
+# --- Config & validation ---
+pydantic>=2.10,<3.0
+pydantic-settings>=2.7,<3.0
+python-dotenv>=1.0,<2.0
+
+# --- AI layer (chatbot / insights) ---
+# Needs a recent SDK for the current Claude models (e.g. claude-opus-4-8).
+anthropic>=0.40
+
+# --- HTTP client (weather, external data) ---
+httpx>=0.28,<1.0
+
+# --- Dev / test ---
+pytest>=8.3,<9.0
+pytest-asyncio>=0.25,<1.0
