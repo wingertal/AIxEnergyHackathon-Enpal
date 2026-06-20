@@ -22,6 +22,6 @@ def test_health():
 
 
 def test_unbuilt_feature_returns_501():
-    """Stubbed services should surface as 501, not 500."""
-    res = client.get("/api/v1/billing/comparison")
+    """The chat feature is still stubbed and should surface as 501, not 500."""
+    res = client.get("/api/v1/chat/suggested-questions")
     assert res.status_code == 501

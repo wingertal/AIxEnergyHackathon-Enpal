@@ -1,38 +1,24 @@
-"""In-memory sample data store.
+"""Compatibility shim over the real dataset loader.
 
-A single place to stash the synthetic household data Enpal provides
-(production, consumption, tariffs, contract terms). Services read from here so
-that swapping in a real database later touches only this file.
-
-TODO(team): load the provided sample dataset (CSV/JSON) into these structures.
+Earlier this held placeholder data. Now the synthetic dataset is loaded by
+:mod:`app.data.dataset`; this module just keeps the small surface the rest of
+the app imported (the default household + a profile accessor) so nothing else
+had to change.
 """
 
 from __future__ import annotations
 
-# Default household used while there is no auth/multi-tenant layer yet.
-DEFAULT_HOUSEHOLD_ID = "demo-household"
+from app.data import dataset
 
-
-# Placeholder containers — fill these from the sample dataset.
-HOUSEHOLD_PROFILE: dict = {
-    "household_id": DEFAULT_HOUSEHOLD_ID,
-    "name": "Demo Household",
-    # e.g. location, system specs (solar kWp, battery kWh), tariff id, contract terms
-}
-
-ENERGY_UNITS: list[dict] = [
-    # e.g. {"id": "solar", "label": "Solar panels", ...},
-    #      {"id": "battery", ...}, {"id": "heat_pump", ...},
-    #      {"id": "ev_charger", ...}, {"id": "grid", ...}
-]
-
-TARIFF: dict = {
-    # e.g. {"type": "dynamic", "currency": "EUR", "standing_charge": ..., "rates": [...]}
-}
+# The demo defaults to the richest household (PV + battery + heat pump + EV).
+DEFAULT_HOUSEHOLD_ID = "HH-1001"
 
 
 def get_household_profile(household_id: str) -> dict | None:
-    """Return the stored profile for a household, or None if unknown."""
-    if household_id == HOUSEHOLD_PROFILE.get("household_id"):
-        return HOUSEHOLD_PROFILE
-    return None
+    """Return the merged household + contract profile, or None if unknown."""
+    household = dataset.get_household(household_id)
+    if household is None:
+        return None
+    contract = dataset.get_contract(household_id)
+    tariff = dataset.get_tariff_for_household(household_id)
+    return {**household, "contract": contract, "tariff": tariff}

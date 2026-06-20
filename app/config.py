@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     weather_api_key: str = ""
     weather_api_base_url: str = "https://api.open-meteo.com/v1"
 
+    # --- Dataset ---
+    # Folder (relative to repo root, or absolute) holding the synthetic JSON dataset.
+    dataset_dir: str = "enpal dataset"
+    # Reference per-kWh grid rate for a "no solar/battery, standard tariff" baseline.
+    # Savings are measured against this counterfactual.
+    baseline_grid_rate_eur_per_kwh: float = 0.349
+
     @property
     def cors_origins_list(self) -> list[str]:
         """CORS origins as a clean list."""

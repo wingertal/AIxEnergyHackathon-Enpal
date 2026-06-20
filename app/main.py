@@ -46,6 +46,14 @@ async def not_implemented_handler(_: Request, exc: NotImplementedError) -> JSONR
     return JSONResponse(status_code=501, content={"detail": detail})
 
 
+@app.exception_handler(KeyError)
+async def not_found_handler(_: Request, exc: KeyError) -> JSONResponse:
+    """Unknown household / resource -> 404 instead of a 500."""
+    return JSONResponse(
+        status_code=404, content={"detail": f"Not found: {exc.args[0] if exc.args else exc}"}
+    )
+
+
 # All feature endpoints live under /api/v1.
 app.include_router(api_router, prefix="/api/v1")
 

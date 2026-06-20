@@ -4,9 +4,9 @@ FastAPI backend for the hackathon challenge: turn a household's messy energy
 reality (solar, battery, heat pump, EV, grid, dynamic tariff) into one clear,
 intuitive, *actionable* view — with an AI layer on top.
 
-This repo is a **boilerplate**. The structure, API surface, and data contracts
-are in place; the feature logic is stubbed for the team to fill in. Every
-endpoint is reachable and documented — unbuilt ones return `501 Not Implemented`.
+Requirements **1–5 are implemented** against the synthetic dataset in
+`enpal dataset/`. The **chatbot (Requirement 6) is still stubbed** and returns
+`501 Not Implemented`. Unknown households return `404`.
 
 ## Quick start
 
@@ -49,26 +49,45 @@ app/
 │   ├── llm.py         # Anthropic Claude client wrapper (chatbot/insights)
 │   └── notifications.py  # push-notification dispatch
 └── data/
-    └── mock_store.py  # synthetic/sample household data (swap for real later)
-tests/                 # smoke tests
+    ├── dataset.py     # loads the synthetic JSON dataset (cached accessors)
+    └── mock_store.py  # thin compat shim (default household + profile)
+tests/                 # smoke + feature tests
 ```
 
 **Layering:** `routes → services → data/core`. Routes stay thin; logic lives in
-services; services are the only callers of the data store and the LLM client.
+services; the shared math lives in `services/analytics.py`; services read the
+world only through `data/dataset.py`.
+
+## Data & assumptions
+
+The dataset is the fixed year **2025** at 15-minute resolution, so the app's
+notion of time is anchored to the data, not the wall clock:
+
+- **"now"** = the latest 15-minute reading (2025-12-31 23:45).
+- **"this month"** = the latest billed month (2025-12).
+- **"this week"** = the last 7 days of readings.
+- **Savings** are measured against a counterfactual baseline: the same
+  consumption bought entirely from the grid at
+  `settings.baseline_grid_rate_eur_per_kwh` (€0.349/kWh) with no PV/battery/feed-in.
+- **Forecast** uses a seasonal weather analog (same calendar day in the home's
+  own history); swap in Open-Meteo via `settings.weather_api_*` later.
+
+Household IDs: `HH-1001` (default, full system), `HH-1002`, `HH-1003`, `HH-1004`.
+Pass `?household_id=HH-100X` to any endpoint.
 
 ## Requirements → where to build
 
 Each requirement maps to a route + schema + service. Find the `NotImplementedError`
 / `TODO(team)` markers and fill them in.
 
-| # | Requirement | Endpoint(s) | Code |
-|---|-------------|-------------|------|
-| 1 | Light indications per item + push on change | `GET /api/v1/lights`, `POST /api/v1/lights/evaluate` | `services/lights_service.py`, `core/notifications.py` |
-| 2 | Money saved + monthly bill + 2-month comparison | `GET /api/v1/billing/comparison` | `services/billing_service.py` |
-| 3 | Per-unit condition + weekly detail + feedback | `GET /api/v1/energy-units`, `GET /api/v1/energy-units/{unit}/weekly` | `services/energy_units_service.py` |
-| 4 | Weekly weather-based forecast | `GET /api/v1/forecast/weekly` | `services/forecast_service.py` |
-| 5 | Weekly money reduced + energy consumed (daily breakdown) | `GET /api/v1/consumption/weekly` | `services/consumption_service.py` |
-| 6 | Chatbot (suggested questions + grounded answers) | `GET /api/v1/chat/suggested-questions`, `POST /api/v1/chat` | `services/chat_service.py`, `core/llm.py` |
+| # | Requirement | Status | Endpoint(s) | Code |
+|---|-------------|--------|-------------|------|
+| 1 | Light indications per item + push on change | ✅ | `GET /api/v1/lights`, `POST /api/v1/lights/evaluate` | `services/lights_service.py`, `core/notifications.py` |
+| 2 | Money saved + monthly bill + 2-month comparison | ✅ | `GET /api/v1/billing/comparison` | `services/billing_service.py` |
+| 3 | Per-unit condition + weekly detail + feedback | ✅ | `GET /api/v1/energy-units`, `GET /api/v1/energy-units/{unit}/weekly` | `services/energy_units_service.py` |
+| 4 | Weekly weather-based forecast | ✅ | `GET /api/v1/forecast/weekly` | `services/forecast_service.py` |
+| 5 | Weekly money reduced + energy consumed (daily breakdown) | ✅ | `GET /api/v1/consumption/weekly` | `services/consumption_service.py` |
+| 6 | Chatbot (suggested questions + grounded answers) | ⏳ stub | `GET /api/v1/chat/suggested-questions`, `POST /api/v1/chat` | `services/chat_service.py`, `core/llm.py` |
 
 ## AI layer
 
