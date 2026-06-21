@@ -30,6 +30,23 @@ def _dataset_dir() -> Path:
     return p if p.is_absolute() else _REPO_ROOT / p
 
 
+def dataset_file(filename: str) -> Path:
+    """Absolute path to a file inside the dataset directory.
+
+    Public counterpart of :func:`_dataset_dir`, used by the raw-data API to stream
+    the underlying JSON straight to the frontend.
+    """
+    return _dataset_dir() / filename
+
+
+def timeseries_file(household_id: str) -> Path:
+    """Absolute path to a household's 15-minute timeseries JSON file."""
+    hh = get_household(household_id)
+    if hh is None:
+        raise KeyError(household_id)
+    return dataset_file(hh["timeseries_file"])
+
+
 def _load_json(filename: str):
     path = _dataset_dir() / filename
     with path.open(encoding="utf-8") as f:

@@ -97,5 +97,23 @@
     "title": "Highest bill in 2025-12",
     "detail": "2025-12 cost EUR 94.36 vs your low of EUR -1.48 in 2025-07, driven by heating demand and lower solar.",
     "suggested_action": "Pre-heat during cheap/sunny hours; review winter heating schedule."
+  },
+  {
+    "household_id": "HH-1005",
+    "type": "anomaly",
+    "severity": "medium",
+    "period": "2025-06-16..2025-06-22",
+    "title": "Heat pump consumed ~35% more than usual",
+    "detail": "Sustained elevated heat-pump electricity use over several days, beyond what the mild June weather explains. Possible defrost fault, low refrigerant, or a thermostat left too high.",
+    "suggested_action": "Check heat pump settings / book a service inspection."
+  },
+  {
+    "household_id": "HH-1006",
+    "type": "anomaly",
+    "severity": "high",
+    "period": "2025-06-16..2025-06-22",
+    "title": "Heat pump consumed ~75% more than usual",
+    "detail": "Sustained elevated heat-pump electricity use over several days, beyond what the mild June weather explains. Possible defrost fault, low refrigerant, or a thermostat left too high.",
+    "suggested_action": "Check heat pump settings / book a service inspection."
   }
 ]

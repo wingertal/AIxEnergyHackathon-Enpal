@@ -8,6 +8,7 @@ from app.api.routes import (
     billing,
     chat,
     consumption,
+    data,
     energy_units,
     forecast,
     health,
@@ -24,3 +25,5 @@ api_router.include_router(energy_units.router)
 api_router.include_router(forecast.router)
 api_router.include_router(consumption.router)
 api_router.include_router(chat.router)
+# Raw dataset access — lets the frontend source all its data from the server.
+api_router.include_router(data.router)
