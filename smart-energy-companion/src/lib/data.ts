@@ -5,7 +5,6 @@ import type {
   TimeseriesRecord,
   Tariff,
   SpotPrice,
-  Contract,
   MonthlyBill,
   InsightEvent,
   Snapshot,
@@ -46,18 +45,16 @@ async function fetchJson<T>(path: string): Promise<T> {
  */
 export async function ensureData(id?: string): Promise<void> {
   if (!_households) {
-    const [households, tariffs, contracts, bills, insights, prices] =
+    const [households, tariffs, bills, insights, prices] =
       await Promise.all([
         fetchJson<Household[]>("/data/households"),
         fetchJson<Tariff[]>("/data/tariffs"),
-        fetchJson<Contract[]>("/data/contracts"),
         fetchJson<MonthlyBill[]>("/data/monthly_bills"),
         fetchJson<InsightEvent[]>("/data/insight_events"),
         fetchJson<{ prices: SpotPrice[] }>("/data/dynamic_prices"),
       ]);
     _households = households;
     _tariffs = tariffs;
-    _contracts = contracts;
     _bills = bills;
     _insights = insights;
     _prices = prices.prices;
@@ -126,16 +123,6 @@ export function getTariff(id: string): Tariff {
   return t;
 }
 
-let _contracts: Contract[] | null = null;
-export function getContracts(): Contract[] {
-  return loaded(_contracts, "contracts");
-}
-export function getContract(id: string): Contract {
-  const c = getContracts().find((x) => x.household_id === id);
-  if (!c) throw new Error(`No contract for ${id}`);
-  return c;
-}
-
 let _bills: MonthlyBill[] | null = null;
 export function getAllBills(): MonthlyBill[] {
   return loaded(_bills, "monthly bills");
@@ -174,10 +161,6 @@ export function getTimeseries(id: string): Timeseries {
 
 const STEP_HOURS = 0.25; // 15-minute resolution -> kWh = kW * 0.25
 
-function dayKey(ts: string): string {
-  return ts.slice(0, 10);
-}
-
 /** Index of the record at-or-just-before the given timestamp. */
 function recordIndexAt(records: TimeseriesRecord[], timestamp: string): number {
   // records are chronological; binary search on ISO string compare
@@ -194,12 +177,6 @@ function recordIndexAt(records: TimeseriesRecord[], timestamp: string): number {
     }
   }
   return ans;
-}
-
-/** Retail price for a household at a record (dynamic = spot+adder, fixed = flat). */
-export function retailPrice(id: string, rec: TimeseriesRecord): number {
-  // The timeseries already carries price_eur_per_kwh; use it directly.
-  return rec.price_eur_per_kwh;
 }
 
 // ---- derived views -----------------------------------------------------------
@@ -265,32 +242,6 @@ function buildHeadline(
           )}% of your home right now; the rest comes from the grid.`
         : `Your home is drawing from the grid right now, little or no solar at this moment.`;
   }
-}
-
-export interface DayPoint {
-  time: string; // HH:mm
-  pv_kw: number;
-  consumption_kw: number;
-  grid_import_kw: number;
-  grid_export_kw: number;
-  battery_soc_pct: number;
-  price: number;
-}
-
-/** A full day's profile (96 points) for charts. */
-export function getDayProfile(id: string, date = REFERENCE_NOW.slice(0, 10)): DayPoint[] {
-  const { records } = getTimeseries(id);
-  return records
-    .filter((r) => r.timestamp.startsWith(date))
-    .map((r) => ({
-      time: r.timestamp.slice(11, 16),
-      pv_kw: round(r.pv_production_kw),
-      consumption_kw: round(r.total_consumption_kw),
-      grid_import_kw: round(r.grid_import_kw),
-      grid_export_kw: round(r.grid_export_kw),
-      battery_soc_pct: round(r.battery_soc_pct),
-      price: round(r.price_eur_per_kwh, 4),
-    }));
 }
 
 export interface DaySummary {
@@ -371,40 +322,6 @@ export function getCheapestWindows(
     .slice(0, count)
     .map((w, i) => ({ ...w, rank: i + 1 }));
   return hours;
-}
-
-export interface YearSummary {
-  household_id: string;
-  total_bill_eur: number;
-  total_consumption_kwh: number;
-  total_pv_kwh: number;
-  total_feed_in_credit_eur: number;
-  avg_self_sufficiency_pct: number;
-  highest_month: { month: string; total_bill_eur: number };
-  lowest_month: { month: string; total_bill_eur: number };
-}
-
-export function getYearSummary(id: string): YearSummary {
-  const bills = getBills(id);
-  const total = bills.reduce((a, b) => a + b.total_bill_eur, 0);
-  const cons = bills.reduce((a, b) => a + b.consumption_kwh, 0);
-  const pv = bills.reduce((a, b) => a + b.pv_production_kwh, 0);
-  const credit = bills.reduce((a, b) => a + b.feed_in_credit_eur, 0);
-  const ss = bills.reduce((a, b) => a + b.self_sufficiency_pct, 0) / (bills.length || 1);
-  const sorted = [...bills].sort((a, b) => a.total_bill_eur - b.total_bill_eur);
-  return {
-    household_id: id,
-    total_bill_eur: round(total),
-    total_consumption_kwh: round(cons),
-    total_pv_kwh: round(pv),
-    total_feed_in_credit_eur: round(credit),
-    avg_self_sufficiency_pct: round(ss, 1),
-    lowest_month: { month: sorted[0].month, total_bill_eur: sorted[0].total_bill_eur },
-    highest_month: {
-      month: sorted[sorted.length - 1].month,
-      total_bill_eur: sorted[sorted.length - 1].total_bill_eur,
-    },
-  };
 }
 
 // ---- where is the home's power coming from right now? ------------------------
@@ -1242,7 +1159,6 @@ function avgImportRate(id: string): number {
  */
 export function getRecommendations(id: string, timestamp = REFERENCE_NOW): Recommendation[] {
   const h = getHousehold(id);
-  const snap = getSnapshot(id, timestamp);
   const status = getTrafficStatus(id, timestamp);
   const [best] = getCheapestWindows(id, timestamp, 1);
   const recs: Recommendation[] = [];
@@ -1476,5 +1392,3 @@ function round(n: number, dp = 2): number {
   const f = 10 ** dp;
   return Math.round(n * f) / f;
 }
-
-export { dayKey };

@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from app import __version__
 from app.config import settings
-from app.core.llm import llm_client
+from app.core.openai_client import openai_client
 
 router = APIRouter(tags=["health"])
 
@@ -18,5 +18,7 @@ async def health() -> dict:
         "status": "ok",
         "version": __version__,
         "env": settings.app_env,
-        "llm_enabled": llm_client.enabled,
+        # True when an OpenAI key is configured; chat falls back to a
+        # deterministic, data-grounded engine when this is False.
+        "ai_enabled": openai_client.enabled,
     }

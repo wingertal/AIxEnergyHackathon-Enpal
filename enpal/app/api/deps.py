@@ -9,7 +9,8 @@ from __future__ import annotations
 
 from fastapi import Query
 
-from app.data.mock_store import DEFAULT_HOUSEHOLD_ID
+# The demo defaults to the richest household (PV + battery + heat pump + EV).
+DEFAULT_HOUSEHOLD_ID = "HH-1001"
 
 
 def get_household_id(

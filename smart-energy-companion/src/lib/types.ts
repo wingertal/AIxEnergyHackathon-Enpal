@@ -55,24 +55,6 @@ export interface SpotPrice {
   spot_price_eur_per_kwh: number;
 }
 
-export interface Contract {
-  household_id: string;
-  customer_name: string;
-  supply_address: { city: string; country: string };
-  provider: string;
-  tariff_id: string;
-  tariff_name: string;
-  contract_start: string;
-  contract_end: string;
-  minimum_term_months: number;
-  notice_period_weeks: number;
-  auto_renew_months: number;
-  base_fee_eur_per_month: number;
-  energy_pricing: { model: string; spot_adder_eur_per_kwh?: number; energy_rate_eur_per_kwh?: number };
-  feed_in_eur_per_kwh: number;
-  assets: Record<string, number | boolean>;
-  contract_terms_text: string;
-}
 
 export interface MonthlyBill {
   household_id: string;

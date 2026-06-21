@@ -23,8 +23,6 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
     # --- AI layer (chatbot) ---
-    anthropic_api_key: str = ""
-    anthropic_model: str = "claude-opus-4-8"
     # OpenAI powers the conversational companion (merged-in chatbot).
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"

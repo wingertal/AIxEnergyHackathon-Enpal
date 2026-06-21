@@ -2,7 +2,7 @@
 
 Thin shared entry point for the OpenAI-powered conversational companion. Prompt
 building and grounding live in the chat service — this module only owns the
-transport, mirroring :mod:`app.core.llm` (Anthropic).
+transport.
 """
 
 from __future__ import annotations

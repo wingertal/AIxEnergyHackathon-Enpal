@@ -17,7 +17,6 @@ The app gives homeowners one intuitive view of their energy reality: what their 
 7. [API reference](#api-reference)
 8. [Calculation strategies](#calculation-strategies)
 9. [Demo households](#demo-households)
-10. [Screenshots](#screenshots)
 
 ---
 
@@ -67,9 +66,7 @@ Chat answers flow through the FastAPI backend (which calls OpenAI), keeping the 
 | Web framework | **FastAPI** 0.115 + **Uvicorn** |
 | Validation | **Pydantic v2** + pydantic-settings |
 | AI — chat | **OpenAI SDK** ≥1.3 (`gpt-4o-mini`) |
-| AI — insights | **Anthropic SDK** ≥0.40 (optional) |
 | Database | **SQLite** via **SQLAlchemy** 2.0 |
-| HTTP client | **httpx** |
 | Testing | **pytest** + pytest-asyncio |
 
 ### Frontend (`smart-energy-companion/`)
@@ -169,13 +166,13 @@ pip install -r requirements.txt
 Create the environment file:
 
 ```bash
-# enpal/.env
+# enpal/.env   (copy from enpal/.env.example)
 OPENAI_API_KEY=sk-...          # your OpenAI key (optional but recommended)
 OPENAI_MODEL=gpt-4o-mini
-DATABASE_URL=sqlite:///./chatbot_data.db
-HOST=0.0.0.0
-PORT=8000
+DATABASE_URL=sqlite:///./enpal_chat.db
 ```
+
+> The host and port are passed to `uvicorn` on the command line (see below), not via `.env`.
 
 Generate the two demo households that showcase warning and high-alert states:
 
@@ -204,11 +201,13 @@ npm install
 Create the environment file:
 
 ```bash
-# smart-energy-companion/.env.local
+# smart-energy-companion/.env.local   (copy from .env.local.example)
 ENPAL_API_URL=http://localhost:8000/api/v1
-OPENAI_API_KEY=sk-...          # same key — used server-side for AI recommendations
+OPENAI_API_KEY=sk-...          # same key, used server-side for AI recommendations
 OPENAI_MODEL=gpt-4o-mini
 ```
+
+> Both values are optional for local dev: `ENPAL_API_URL` defaults to `http://localhost:8000/api/v1`, and without `OPENAI_API_KEY` the recommendations fall back to the deterministic engine. The chat companion needs no key here, it is served by the backend.
 
 Start the development server:
 
@@ -224,11 +223,11 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### 4. Switch households
 
-The household selector in the app header switches between:
+The household selector in the app header switches between every household in the dataset. Notable ones for the demo:
 
 | ID | Name | Health state |
 |---|---|---|
-| HH-1001 | Default household | All good |
+| HH-1001 | Default household (full system) | All good |
 | HH-1003 | Fixed-tariff household | All good (flat rate) |
 | HH-1005 | Familie Wagner, Stuttgart | Warning |
 | HH-1006 | Familie Hoffmann, Frankfurt | High alert |
@@ -243,9 +242,8 @@ The household selector in the app header switches between:
 |---|---|---|
 | `OPENAI_API_KEY` | — | OpenAI key for the chat companion. Omit to use the offline fallback. |
 | `OPENAI_MODEL` | `gpt-4o-mini` | Model used for chat completions |
-| `DATABASE_URL` | `sqlite:///./chatbot_data.db` | SQLAlchemy database URL |
-| `HOST` | `0.0.0.0` | Uvicorn bind host |
-| `PORT` | `8000` | Uvicorn port |
+| `DATABASE_URL` | `sqlite:///./enpal_chat.db` | SQLAlchemy database URL |
+| `CORS_ORIGINS` | `http://localhost:3000,http://localhost:5173` | Comma-separated allowed frontend origins |
 
 ### Frontend (`smart-energy-companion/.env.local`)
 
@@ -291,7 +289,7 @@ All endpoints are under `/api/v1`. The interactive Swagger UI is at [http://loca
 
 ```json
 {
-  "reply": "Right now power is around €0.24/kWh. The cheapest window today is 16:00 (~€0.19/kWh) — that's a good slot for the dishwasher or laundry.",
+  "reply": "Right now power is around €0.24/kWh. The cheapest window today is 16:00 (~€0.19/kWh), a good slot for the dishwasher or laundry.",
   "conversation_id": 3
 }
 ```
@@ -314,7 +312,7 @@ Three signals are combined into a single `great / warning / high alert` level:
 
 - **Grid cost** — each 15-minute record carries a `price_eur_per_kwh` field. Actual cost = `grid_import_kw × 0.25h × price`.
 - **Solar savings** — the counterfactual cost at the same price if all consumed energy had come from the grid, minus what was actually paid for grid imports.
-- **Feed-in earnings** — `grid_export_kw × 0.25h × feed_in_eur_per_kwh` from the household contract.
+- **Feed-in earnings** — `grid_export_kw × 0.25h × feed_in_eur_per_kwh` from the household's tariff.
 - **Monthly projection** — linear extrapolation: `(cost_so_far / elapsed_days) × days_in_month`.
 
 ### Per-device economics
@@ -353,4 +351,4 @@ Both households clone a real household's base time-series and inject an anomaly 
 
 ## License
 
-Built for the Enpal Hackathon 2025. All rights reserved.
+Released under the **MIT License** for the Enpal Hackathon. See [LICENSE](LICENSE).

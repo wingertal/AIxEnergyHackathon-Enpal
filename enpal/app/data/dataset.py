@@ -106,10 +106,6 @@ def load_timeseries(household_id: str) -> list[dict]:
 # --- Accessors -------------------------------------------------------------
 
 
-def known_household_ids() -> list[str]:
-    return [h["household_id"] for h in load_households()]
-
-
 def get_household(household_id: str) -> dict | None:
     return next(
         (h for h in load_households() if h["household_id"] == household_id), None
@@ -149,10 +145,6 @@ def get_insights(household_id: str) -> list[dict]:
 def current_record(household_id: str) -> dict:
     """The most recent 15-minute reading — the app's notion of "right now"."""
     return load_timeseries(household_id)[-1]
-
-
-def latest_month(household_id: str) -> str:
-    return get_bills(household_id)[-1]["month"]
 
 
 def records_by_date(household_id: str) -> dict[str, list[dict]]:

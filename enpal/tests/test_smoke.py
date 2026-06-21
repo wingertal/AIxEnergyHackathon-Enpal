@@ -6,6 +6,8 @@ from app.main import app
 
 client = TestClient(app)
 
+HH = "HH-1001"  # real demo household (PV + battery + heat pump + EV)
+
 
 def test_root():
     res = client.get("/")
@@ -18,32 +20,27 @@ def test_health():
     assert res.status_code == 200
     body = res.json()
     assert body["status"] == "ok"
-    assert "llm_enabled" in body
-
-
-def test_unbuilt_feature_returns_501():
-    """The chat feature is still stubbed and should surface as 501, not 500."""
-    res = client.get("/api/v1/chat/suggested-questions")
-    assert res.status_code == 501
+    assert "ai_enabled" in body
 
 
 def test_chat_suggested_questions():
-    res = client.get("/api/v1/chat/suggested-questions")
+    res = client.get(f"/api/v1/chat/suggested-questions?household_id={HH}")
     assert res.status_code == 200
     body = res.json()
-    assert body["household_id"] == "demo-household"
+    assert body["household_id"] == HH
     assert isinstance(body["questions"], list)
     assert any(question["source"] == "popular" for question in body["questions"])
 
 
 def test_chat_answer_works():
+    """Works with or without an OpenAI key (deterministic fallback otherwise)."""
     payload = {
-        "household_id": "demo-household",
-        "message": "How much solar energy did we generate yesterday?",
+        "household_id": HH,
+        "message": "How much solar energy did we generate today?",
     }
     res = client.post("/api/v1/chat", json=payload)
     assert res.status_code == 200
     body = res.json()
-    assert "reply" in body
     assert isinstance(body["reply"], str)
     assert body["reply"].strip() != ""
+    assert body["conversation_id"] is not None
