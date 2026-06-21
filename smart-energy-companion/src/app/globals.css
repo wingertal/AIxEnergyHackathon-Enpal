@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+:root {
+  /* Enpal brand palette */
+  --background: #f3f6fa;
+  --surface: #ffffff;
+  --foreground: #062343;
+  --muted: #5d6b82;
+  --border: #e0e7f0;
+
+  --navy: #062343;
+  --navy-2: #14365e; /* gradient end for dark cards */
+  --slate: #3b4f73;
+  --sky: #e2f1ff; /* soft blue tint */
+  --gold: #d8a31a;
+  --gold-soft: #f6e8c2;
+
+  /* energy palette (device colours) */
+  --solar: #d8a31a;
+  --solar-soft: #f6e8c2;
+  --grid: #3b4f73;
+  --grid-soft: #e2f1ff;
+  --battery: #007d55;
+  --battery-2: #11b386;
+  --battery-soft: #d3efe4;
+  --heatpump: #8b5cf6;
+  --ev: #ff8a3d;
+  --home: #062343; /* navy = primary text */
+  --accent: #062343; /* primary actions */
+  --danger: #d9534f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-solar: var(--solar);
+  --color-grid: var(--grid);
+  --color-battery: var(--battery);
+  --color-accent: var(--accent);
+  --color-navy: var(--navy);
+  --color-slate: var(--slate);
+  --color-sky: var(--sky);
+  --color-gold: var(--gold);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--border);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 2px rgba(6, 35, 67, 0.04), 0 8px 24px -18px rgba(6, 35, 67, 0.16);
+}
+
+/* Interactive cards: subtle lift + shadow on hover, gentle press on click. */
+.card-interactive {
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: #cdd9e8;
+  box-shadow: 0 2px 6px rgba(6, 35, 67, 0.05), 0 20px 44px -22px rgba(6, 35, 67, 0.32);
+}
+.card-interactive:active {
+  transform: translateY(0) scale(0.995);
+}
+
+/* Enpal-style dark hero card (mirrors their Vergütung card) */
+.card-navy {
+  background: linear-gradient(150deg, var(--navy) 0%, var(--navy-2) 100%);
+  border-radius: 1.25rem;
+  color: #fff;
+  box-shadow: 0 14px 36px -18px rgba(6, 35, 67, 0.5);
+}
+
+/* Soft uppercase section eyebrow used above card groups. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* subtle pulse for the "live" dot */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+.live-dot { animation: livePulse 1.8s ease-in-out infinite; }
+
+/* flowing dash along the energy-flow connectors */
+@keyframes flowDash {
+  to { stroke-dashoffset: -16; }
+}
+.flow-line { stroke-dasharray: 4 6; animation: flowDash 1s linear infinite; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease both; }
