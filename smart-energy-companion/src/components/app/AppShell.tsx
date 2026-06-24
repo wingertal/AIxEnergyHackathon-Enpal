@@ -328,7 +328,7 @@ function RecCard({ rec }: { rec: Recommendation }) {
               </span>
             )}
           </div>
-          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{rec.detail}</p>
+          <p className="mt-1 text-[15px] leading-relaxed text-[var(--foreground)]">{rec.detail}</p>
         </div>
       </div>
     </div>
@@ -382,7 +382,7 @@ function LightStrip({
               {health.badge}
             </span>
           </div>
-          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{health.reason}</p>
+          <p className="mt-1 text-[15px] leading-relaxed text-[var(--foreground)]">{health.reason}</p>
         </div>
       </div>
 
@@ -450,7 +450,7 @@ function SavingsHero({
       <div className="mt-3 text-[46px] font-semibold leading-none tabular text-[var(--battery)]">
         {eur(month.saved_eur, 0)}
       </div>
-      <p className="mt-2 text-[15px] font-medium leading-snug text-[var(--foreground)]">
+      <p className="mt-2 text-[15px] leading-snug text-[var(--foreground)]">
         {eur(month.saved_from_solar_eur, 0)} from using your own solar
         {month.feed_in_credit_eur > 0 && (
           <> + {eur(month.feed_in_credit_eur, 0)} from selling surplus back</>
@@ -582,7 +582,7 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
       <div className="mt-2.5 text-[18px] font-semibold text-[var(--home)]">
         {unit.name}
       </div>
-      <div className="mt-0.5 text-[12.5px] leading-snug text-muted line-clamp-2">
+      <div className="mt-0.5 text-[15px] leading-snug text-muted line-clamp-2">
         {unit.status}
       </div>
       {unit.impact && unit.today_eur !== undefined && (
@@ -700,7 +700,7 @@ function ChargeDetail({ data }: { data: AppData }) {
           <Bolt className="h-7 w-7" />
         </span>
         <h2 className="mt-4 text-[21.6px] font-semibold text-[var(--home)]">{status.title}</h2>
-        <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{status.reason}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{status.reason}</p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 text-[12.5px]">
           <span className="text-muted">Right now</span>
           {onOwnPower ? (
@@ -724,7 +724,7 @@ function ChargeDetail({ data }: { data: AppData }) {
               </div>
               <div className="mt-1 text-[12.5px] text-muted">same price all day</div>
             </div>
-            <p className="mt-3 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--foreground)]">
               You&apos;re on a fixed price, so grid power costs the same at every hour. Run
               appliances whenever suits you, and use your own solar first since it&apos;s
               cheaper than the grid.
@@ -747,7 +747,7 @@ function ChargeDetail({ data }: { data: AppData }) {
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--foreground)]">
               {onOwnPower
                 ? "Your solar is covering the home for free right now. When you do need the grid, in the evening or for the car, these are today's cheapest hours."
                 : "Run the dishwasher, laundry or EV charging in these windows to pay the least."}
@@ -781,14 +781,14 @@ function SavingsDetail({ data }: { data: AppData }) {
             </div>
           </div>
         </div>
-        <p className="mt-4 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+        <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground)]">
           Without your solar, this month would have cost about{" "}
           <span className="font-semibold text-[var(--home)]">{eur(month.bill_without_solar_eur, 0)}</span>. You
           used {month.self_consumed_kwh.toFixed(0)} kWh of your own power and earned{" "}
           {eur(month.feed_in_credit_eur)} feeding surplus back.
         </p>
         {tariffSaving > 0 && (
-          <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">
             Your tariff is also a good fit, about{" "}
             <span className="font-semibold text-[var(--home)]">{eur(tariffSaving, 0)}/yr</span> cheaper than a
             standard plan.
@@ -802,7 +802,7 @@ function SavingsDetail({ data }: { data: AppData }) {
             <span>💡</span>
             <h3 className="text-[18px] font-semibold text-[var(--home)]">Money on the table</h3>
           </div>
-          <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">
             You sent <span className="font-semibold text-[var(--home)]">{batteryRec.exported_kwh.toFixed(0)} kWh</span> of
             spare solar to the grid this year for a small feed-in payment. A home battery (~{batteryRec.suggested_kwh} kWh)
             would store it for the evening instead, saving roughly{" "}
@@ -866,7 +866,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                 {u.status}
               </span>
             </div>
-            <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{u.why}</p>
+            <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{u.why}</p>
             {u.impact && u.today_eur !== undefined && (
               <div className="mt-3 flex gap-6 border-t pt-3">
                 <div>
@@ -907,7 +907,7 @@ function WeatherDetail({ data }: { data: AppData }) {
     <div className="space-y-4">
       <div className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
         <h2 className="text-[18px] font-semibold text-[var(--home)]">{weather.recommendation.title}</h2>
-        <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{weather.recommendation.detail}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{weather.recommendation.detail}</p>
       </div>
 
       <div className="card p-3">

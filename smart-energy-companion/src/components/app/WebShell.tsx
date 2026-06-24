@@ -192,7 +192,7 @@ function StatusPanel({
               {health.badge}
             </span>
           </div>
-          <p className="mt-1.5 max-w-[60ch] text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+          <p className="mt-1.5 max-w-[60ch] text-[15px] leading-relaxed text-[var(--foreground)]">
             {health.reason}
           </p>
           <p className="mt-2 text-[15px] text-muted tabular">
@@ -242,7 +242,7 @@ function StatusPanel({
           </>
         ) : (
           <>
-            <h3 className="text-[15px] font-semibold text-[var(--home)]">
+            <h3 className="text-[18px] font-semibold text-[var(--home)]">
               Cheapest times to use power today
             </h3>
             <div className="mt-3 flex gap-3">
@@ -319,7 +319,7 @@ function RecCard({ rec }: { rec: Recommendation }) {
               </span>
             )}
           </div>
-          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
+          <p className="mt-1 text-[15px] leading-relaxed text-[var(--foreground)]">
             {rec.detail}
           </p>
         </div>
@@ -371,14 +371,14 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
             />
           </div>
           <p
-            className="mt-0.5 text-[12.5px] font-medium"
+            className="mt-0.5 text-[15px] font-medium"
             style={{ color: c.color }}
           >
             {unit.status}
           </p>
         </div>
       </div>
-      <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{unit.why}</p>
+      <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--foreground)]">{unit.why}</p>
       {unit.impact && unit.today_eur !== undefined && (
         <div className="mt-auto flex gap-8 border-t pt-3">
           <div>
@@ -464,7 +464,7 @@ function SavingsPanel({
         </span>
         <span className="mb-1.5 text-[12.5px] text-muted">saved in {label}</span>
       </div>
-      <p className="mt-2 text-[15px] font-medium leading-snug text-[var(--foreground)]">
+      <p className="mt-2 text-[15px] leading-snug text-[var(--foreground)]">
         Mostly by using your own solar ({eur(month.saved_from_solar_eur, 0)}) instead of
         buying it
         {month.feed_in_credit_eur > 0 && (
@@ -563,7 +563,7 @@ function LivePanel({
           .map((r) => (
             <div key={r.label} className="flex items-baseline justify-between">
               <span className="text-[12.5px] text-muted">{r.label}</span>
-              <span className="text-[12.5px] font-semibold text-[var(--home)] tabular">
+              <span className="text-[18px] font-semibold text-[var(--home)] tabular">
                 {r.value}
               </span>
             </div>
@@ -707,7 +707,7 @@ function AskCard({
           <button
             key={q.id ?? q.text}
             onClick={onAsk}
-            className="flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-3.5 py-2.5 text-left text-[12.5px] text-[var(--home)] transition hover:border-[var(--home)]"
+            className="flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-3.5 py-2.5 text-left text-[15px] text-[var(--home)] transition hover:border-[var(--home)]"
           >
             {q.text}
             <span className="text-muted">→</span>
