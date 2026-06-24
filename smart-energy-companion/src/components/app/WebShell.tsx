@@ -27,6 +27,7 @@ import {
   LIGHT_COLORS,
   HEALTH_COLORS,
   CONDITION_COLORS,
+  DEVICE_COLORS,
 } from "./icons";
 import { AskScreen } from "./AskScreen";
 
@@ -350,12 +351,13 @@ function EquipmentPanel({ units }: { units: EquipmentUnit[] }) {
 
 function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
   const c = CONDITION_COLORS[unit.condition];
+  const d = DEVICE_COLORS[unit.key] ?? { color: "var(--muted)", soft: "var(--background)" };
   return (
     <div className="card card-interactive flex flex-col p-4">
       <div className="flex items-start gap-3">
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: c.soft, color: c.color }}
+          style={{ background: d.soft, color: d.color }}
         >
           <UnitIcon unit={unit.key} />
         </span>

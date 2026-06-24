@@ -181,6 +181,17 @@ export const CONDITION_COLORS = {
   grey: { color: "var(--muted)", soft: "var(--background)" },
 } as const;
 
+// Per-device brand colors for equipment icon badges (independent of health state).
+export const DEVICE_COLORS: Record<string, { color: string; soft: string }> = {
+  solar:     { color: "var(--solar)",    soft: "var(--solar-soft)" },
+  battery:   { color: "var(--battery)",  soft: "var(--battery-soft)" },
+  battery_suggestion: { color: "var(--battery)", soft: "var(--battery-soft)" },
+  heatpump:  { color: "var(--heatpump)", soft: "#ede9fe" },
+  ev:        { color: "var(--ev)",       soft: "#fff0e6" },
+  grid:      { color: "var(--grid)",     soft: "var(--grid-soft)" },
+  household: { color: "var(--navy)",     soft: "var(--sky)" },
+};
+
 export const LIGHT_COLORS = {
   green: { color: "var(--battery)", soft: "var(--battery-soft)", label: "Good" },
   yellow: { color: "var(--warning)", soft: "var(--warning-soft)", label: "Okay" },

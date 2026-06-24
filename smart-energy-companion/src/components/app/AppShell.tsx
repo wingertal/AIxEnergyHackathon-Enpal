@@ -30,6 +30,7 @@ import {
   LIGHT_COLORS,
   HEALTH_COLORS,
   CONDITION_COLORS,
+  DEVICE_COLORS,
 } from "./icons";
 import { AskScreen } from "./AskScreen";
 
@@ -495,6 +496,7 @@ function Dot({ c }: { c: "green" | "amber" | "grey" }) {
 
 function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => void }) {
   const c = CONDITION_COLORS[unit.condition];
+  const d = DEVICE_COLORS[unit.key] ?? { color: "var(--muted)", soft: "var(--background)" };
   return (
     <button
       onClick={onClick}
@@ -503,7 +505,7 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
       <div className="flex items-start justify-between">
         <span
           className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{ background: c.soft, color: c.color }}
+          style={{ background: d.soft, color: d.color }}
         >
           <UnitIcon unit={unit.key} />
         </span>
@@ -788,10 +790,11 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
     <div className="space-y-3">
       {units.map((u) => {
         const c = CONDITION_COLORS[u.condition];
+        const d = DEVICE_COLORS[u.key] ?? { color: "var(--muted)", soft: "var(--background)" };
         return (
           <div key={u.key} className="card p-5">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2" style={{ color: c.color }}>
+              <span className="flex items-center gap-2" style={{ color: d.color }}>
                 <UnitIcon unit={u.key} />
                 <span className="t-heading text-[var(--home)]">{u.name}</span>
               </span>
