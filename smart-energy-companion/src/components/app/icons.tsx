@@ -177,20 +177,20 @@ export const REC_TONE = {
 
 export const CONDITION_COLORS = {
   green: { color: "var(--battery)", soft: "var(--battery-soft)" },
-  amber: { color: "var(--solar)", soft: "var(--solar-soft)" },
+  amber: { color: "var(--warning)", soft: "var(--warning-soft)" },
   grey: { color: "var(--muted)", soft: "var(--background)" },
 } as const;
 
 export const LIGHT_COLORS = {
   green: { color: "var(--battery)", soft: "var(--battery-soft)", label: "Good" },
-  yellow: { color: "var(--solar)", soft: "var(--solar-soft)", label: "Okay" },
+  yellow: { color: "var(--warning)", soft: "var(--warning-soft)", label: "Okay" },
   red: { color: "var(--danger)", soft: "#fae3e2", label: "Wait" },
 } as const;
 
 // Overall energy-health states (great / warning / high alert).
 export const HEALTH_COLORS = {
   great: { color: "var(--battery)", soft: "var(--battery-soft)" },
-  warning: { color: "var(--solar)", soft: "var(--solar-soft)" },
+  warning: { color: "var(--warning)", soft: "var(--warning-soft)" },
   alert: { color: "var(--danger)", soft: "#fae3e2" },
 } as const;
 

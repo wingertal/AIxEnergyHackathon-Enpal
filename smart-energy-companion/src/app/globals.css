@@ -28,6 +28,8 @@
   --home: #062343; /* navy = primary text */
   --accent: #062343; /* primary actions */
   --danger: #d9534f;
+  --warning: #f59e0b;   /* amber — semantic caution, distinct from Enpal gold */
+  --warning-soft: #fef3c7;
 }
 
 @theme inline {
