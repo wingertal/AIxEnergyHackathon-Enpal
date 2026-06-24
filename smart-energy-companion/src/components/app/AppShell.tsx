@@ -21,8 +21,8 @@ import type { WeatherOutlook } from "@/lib/weather";
 import { eur } from "@/lib/format";
 import {
   Back,
-  Bolt,
   Chevron,
+  HealthGlyph,
   Sky,
   UnitIcon,
 
@@ -61,6 +61,7 @@ export interface AppData {
   questions: SuggestedQuestion[];
   monthLabel: string;
   greeting: string;
+  dataDate: string; // human-readable reference date e.g. "20 Jun 2025"
 }
 
 type Screen =
@@ -126,18 +127,21 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
             Coach
           </span>
         </div>
-        <select
-          value={data.household.id}
-          onChange={(e) => onSwitch(e.target.value)}
-          className="rounded-full border bg-white px-3 py-1.5 t-label font-medium text-[var(--home)] outline-none"
-          aria-label="Switch household"
-        >
-          {data.households.map((h) => (
-            <option key={h.id} value={h.id}>
-              {h.name.replace("Familie ", "").replace("WG ", "")} · {h.city}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-2">
+          <span className="t-label text-muted">{data.dataDate}</span>
+          <select
+            value={data.household.id}
+            onChange={(e) => onSwitch(e.target.value)}
+            className="rounded-full border bg-white px-3 py-1.5 t-label font-medium text-[var(--home)] outline-none"
+            aria-label="Switch household"
+          >
+            {data.households.map((h) => (
+              <option key={h.id} value={h.id}>
+                {h.name.replace("Familie ", "").replace("WG ", "")} · {h.city}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </header>
   );
@@ -611,71 +615,86 @@ function LastWeek({ days }: { days: DailySaving[] }) {
 /* ----------------------------------------------------------------- details */
 
 function ChargeDetail({ data }: { data: AppData }) {
-  const { status, windows } = data;
-  const c = LIGHT_COLORS[status.light];
+  const { status, windows, health } = data;
+  const hc = HEALTH_COLORS[health.level];
+  const sc = LIGHT_COLORS[status.light];
   const onOwnPower = gridShare(status) < 15;
-  // Fixed-tariff homes have the same price every hour, so "cheapest hours" is meaningless.
   const flatRate = windows.length > 0 && windows.every((w) => w.price === windows[0].price);
+
   return (
     <div className="space-y-4">
-      <div className="card p-6 text-center">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-white" style={{ background: c.color }}>
-          <Bolt className="h-7 w-7" />
-        </span>
-        <h2 className="mt-4 t-title text-[var(--home)]">{status.title}</h2>
-        <p className="mt-2 t-body text-[var(--foreground)]">{status.reason}</p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 t-label">
-          <span className="text-muted">Right now</span>
-          {onOwnPower ? (
-            <span className="font-semibold text-[var(--battery)]">free · your own solar</span>
-          ) : (
-            <span className="font-semibold text-[var(--home)] tabular">grid {status.price_cents}c/kWh</span>
-          )}
+      {/* ① Health status — driven by health.level, matches the home screen dot */}
+      <div className="card p-5">
+        <div className="flex items-start gap-3">
+          <span
+            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+            style={{ background: hc.color }}
+          >
+            <HealthGlyph level={health.level} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="t-heading text-[var(--home)]">{health.title}</p>
+            <p className="mt-1 t-body text-[var(--foreground)]">{health.reason}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 divide-x border-t pt-4">
+          <div className="pr-3">
+            <p className="eyebrow mb-1">Self-powered</p>
+            <p className="t-metric text-[var(--home)]">{health.self_sufficiency_pct}%</p>
+          </div>
+          <div className="px-3">
+            <p className="eyebrow mb-1">Using now</p>
+            <p className="t-metric text-[var(--home)]">{status.house_load_kw.toFixed(1)} kW</p>
+          </div>
+          <div className="pl-3">
+            <p className="eyebrow mb-1">Power cost</p>
+            <p
+              className="t-metric"
+              style={{ color: onOwnPower ? "var(--battery)" : "var(--home)" }}
+            >
+              {onOwnPower ? "Free" : `${status.price_cents}c`}
+            </p>
+          </div>
         </div>
       </div>
 
+      {/* ② Price timing — when is cheapest to use grid */}
       <div className="card p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ background: sc.color }}
+          />
+          <h3 className="t-heading text-[var(--home)]">
+            {flatRate ? "Your grid price today" : "Cheapest times today"}
+          </h3>
+        </div>
+        <p className="t-body text-[var(--foreground)]">{status.reason}</p>
+
         {flatRate ? (
-          <>
-            <h3 className="t-heading text-[var(--home)]">
-              Your grid price today
-            </h3>
-            <div className="mt-3 rounded-xl bg-[var(--background)] px-4 py-4 text-center">
-              <div className="t-metric text-[var(--home)] tabular">
-                {(windows[0].price * 100).toFixed(1)}c
-                <span className="t-label font-normal text-muted">/kWh</span>
-              </div>
-              <div className="mt-1 t-label text-muted">same price all day</div>
+          <div className="mt-3 rounded-xl bg-[var(--background)] px-4 py-3 text-center">
+            <div className="t-metric tabular text-[var(--home)]">
+              {(windows[0].price * 100).toFixed(1)}c
+              <span className="t-label font-normal text-muted">/kWh</span>
             </div>
-            <p className="mt-3 t-body text-[var(--foreground)]">
-              You&apos;re on a fixed price, so grid power costs the same at every hour. Run
-              appliances whenever suits you, and use your own solar first since it&apos;s
-              cheaper than the grid.
-            </p>
-          </>
+            <div className="mt-0.5 t-label text-muted">same price all day</div>
+          </div>
         ) : (
-          <>
-            <h3 className="t-heading text-[var(--home)]">
-              Cheapest times to use power today
-            </h3>
+          windows.length > 0 && (
             <div className="mt-3 flex gap-2">
               {windows.map((w) => (
                 <div
                   key={w.time}
                   className="flex-1 rounded-xl px-3 py-2.5 text-center"
-                  style={{ background: w.rank === 1 ? c.soft : "var(--background)" }}
+                  style={{ background: w.rank === 1 ? sc.soft : "var(--background)" }}
                 >
-                  <div className="t-heading text-[var(--home)] tabular">{w.time}</div>
-                  <div className="t-label text-muted tabular">{(w.price * 100).toFixed(1)}c</div>
+                  <div className="t-heading tabular text-[var(--home)]">{w.time}</div>
+                  <div className="t-label tabular text-muted">{(w.price * 100).toFixed(1)}c</div>
                 </div>
               ))}
             </div>
-            <p className="mt-3 t-body text-[var(--foreground)]">
-              {onOwnPower
-                ? "Your solar is covering the home for free right now. When you do need the grid, in the evening or for the car, these are today's cheapest hours."
-                : "Run the dishwasher, laundry or EV charging in these windows to pay the least."}
-            </p>
-          </>
+          )
         )}
       </div>
     </div>

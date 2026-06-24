@@ -123,6 +123,7 @@ function TopBar({
         <div className="ml-2 hidden text-[15px] text-muted lg:block">
           {data.greeting}, {shortName(data.household.name)} ·{" "}
           <span className="text-[var(--home)]">{data.household.city}</span>
+          <span className="ml-2 text-[12px] opacity-60">{data.dataDate}</span>
         </div>
 
         <div className="ml-auto flex items-center gap-3">

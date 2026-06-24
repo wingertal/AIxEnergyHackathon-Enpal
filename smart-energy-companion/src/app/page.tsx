@@ -75,6 +75,11 @@ export default async function Home({
     questions: await getSuggestedQuestions(id),
     monthLabel: monthLabel(REFERENCE_NOW.slice(0, 7)),
     greeting,
+    dataDate: new Date(REFERENCE_NOW).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
   };
 
   return (
