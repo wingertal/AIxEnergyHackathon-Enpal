@@ -21,7 +21,7 @@ import {
   UnitIcon,
   RecGlyph,
   HealthGlyph,
-  PiggyBank,
+
   Send,
   REC_TONE,
   LIGHT_COLORS,
@@ -420,46 +420,36 @@ function SavingsPanel({
   label: string;
 }) {
   return (
-    <section className="card p-6">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span
-            className="flex h-8 w-8 items-center justify-center rounded-xl"
-            style={{ background: "var(--battery-soft)", color: "var(--battery)" }}
-          >
-            <PiggyBank />
-          </span>
-          <span className="eyebrow">This month&apos;s savings</span>
+    <section>
+      <p className="eyebrow mb-3">Savings</p>
+      <div className="card p-6">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[18px] font-semibold text-[var(--home)]">in {label}</span>
+          <TrendPill comparison={comparison} />
         </div>
-        <TrendPill comparison={comparison} />
-      </div>
 
-      <div className="mt-3 flex items-end gap-2">
-        <span className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
+        <div className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
           {eur(month.saved_eur, 0)}
-        </span>
-        <span className="mb-1.5 text-[12.5px] text-muted">saved in {label}</span>
-      </div>
-      <p className="mt-2 text-[15px] leading-snug text-[var(--foreground)]">
-        Mostly by using your own solar ({eur(month.saved_from_solar_eur, 0)}) instead of
-        buying it
-        {month.feed_in_credit_eur > 0 && (
-          <>, plus {eur(month.feed_in_credit_eur, 0)} earned selling the surplus back</>
-        )}
-        .
-      </p>
-
-      <div className="mt-5 grid grid-cols-2 gap-4 border-t pt-4">
-        <div>
-          <div className="text-[12.5px] text-muted">Spent so far this month</div>
-          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
-            {eur(mtd.so_far_eur, 0)}
-          </div>
         </div>
-        <div>
-          <div className="text-[12.5px] text-muted">Projected month total</div>
-          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
-            ~{eur(mtd.likely_total_eur, 0)}
+        <p className="mt-2 text-[14px] leading-snug text-muted">
+          {eur(month.saved_from_solar_eur, 0)} from using your own solar
+          {month.feed_in_credit_eur > 0 && (
+            <> + {eur(month.feed_in_credit_eur, 0)} from selling surplus back</>
+          )}.
+        </p>
+
+        <div className="mt-5 grid grid-cols-2 border-t pt-4">
+          <div className="pr-4">
+            <div className="eyebrow mb-0.5">Spent so far</div>
+            <div className="text-[20px] font-semibold text-[var(--home)] tabular">
+              {eur(mtd.so_far_eur, 0)}
+            </div>
+          </div>
+          <div className="border-l pl-4">
+            <div className="eyebrow mb-0.5">Projected total</div>
+            <div className="text-[20px] font-semibold text-[var(--home)] tabular">
+              ~{eur(mtd.likely_total_eur, 0)}
+            </div>
           </div>
         </div>
       </div>
@@ -473,9 +463,9 @@ function TrendPill({ comparison }: { comparison: BillComparison }) {
   const amount = eur(Math.abs(delta_eur), 0);
   const cfg =
     verdict === "better"
-      ? { bg: "var(--battery-soft)", fg: "var(--battery)", icon: "↓", text: `${amount} cheaper than last month` }
+      ? { bg: "var(--battery-soft)", fg: "var(--battery)", icon: "↓", text: `${amount} less` }
       : verdict === "worse"
-      ? { bg: "#fae3e2", fg: "var(--danger)", icon: "↑", text: `${amount} more than last month` }
+      ? { bg: "#fee2e2", fg: "#b91c1c", icon: "↑", text: `${amount} more` }
       : { bg: "var(--background)", fg: "var(--muted)", icon: "→", text: "same as last month" };
   return (
     <span
