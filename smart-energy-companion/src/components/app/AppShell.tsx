@@ -425,7 +425,7 @@ function SavingsHero({
     <button onClick={onClick} className="card card-interactive w-full p-5 text-left">
       <div className="flex items-start justify-between">
         <div className="flex items-baseline gap-2">
-          <span className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</span>
+          <span className="t-display text-[var(--home)]">{eur(month.saved_eur, 0)}</span>
           <span className="t-body text-muted">in {label}</span>
         </div>
         {badgeText && badgeStyle && (
@@ -700,7 +700,7 @@ function SavingsDetail({ data }: { data: AppData }) {
         <div className="mt-3 grid grid-cols-2 gap-4">
           <div>
             <p className="t-label text-muted">You saved</p>
-            <p className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</p>
+            <p className="t-display text-[var(--home)]">{eur(month.saved_eur, 0)}</p>
           </div>
           <div>
             <p className="t-label text-muted">You paid</p>

@@ -355,7 +355,7 @@ function SavingsPanel({
       <div className="card p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-baseline gap-2">
-            <span className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
+            <span className="text-[48px] font-semibold leading-none tabular text-[var(--home)]">
               {eur(month.saved_eur, 0)}
             </span>
             <span className="text-[15px] text-muted">in {label}</span>

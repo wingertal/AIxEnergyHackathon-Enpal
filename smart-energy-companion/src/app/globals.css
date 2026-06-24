@@ -178,62 +178,23 @@ body {
 }
 .flow-line { stroke-dasharray: 4 6; animation: flowDash 1s linear infinite; }
 
-/* Animated arc sweeping around energy status cards.
-   --arc-c   : the arc color (set per element)
-   --arc-opacity : animatable opacity for the arc only (not card content) */
+/* Animated arc sweeping around energy status cards — color via --arc-c. */
 @property --card-arc {
   syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
 }
-@property --arc-opacity {
-  syntax: '<number>';
-  initial-value: 1;
-  inherits: false;
-}
 @keyframes arcSpin {
   to { --card-arc: 360deg; }
 }
-/* warning — slow gentle dims, like a lamp starting to fail */
-@keyframes flickerWarn {
-  0%, 100%     { --arc-opacity: 1;    }
-  15%, 18%     { --arc-opacity: 0.25; }
-  62%, 65%     { --arc-opacity: 0.3;  }
-}
-/* alert — rapid irregular cut-outs, like a bulb about to blow */
-@keyframes flickerAlert {
-  0%,  4%      { --arc-opacity: 1;    }
-  5%,  7%      { --arc-opacity: 0.08; }
-  8%,  28%     { --arc-opacity: 1;    }
-  29%, 31%     { --arc-opacity: 0.12; }
-  32%, 49%     { --arc-opacity: 1;    }
-  50%, 52%     { --arc-opacity: 0.05; }
-  53%, 54%     { --arc-opacity: 0.9;  }
-  55%, 56%     { --arc-opacity: 0.08; }
-  57%, 79%     { --arc-opacity: 1;    }
-  80%, 82%     { --arc-opacity: 0.15; }
-  83%, 100%    { --arc-opacity: 1;    }
-}
-
-/* All three levels share one single arc — only the flicker animation differs */
 .card-arc-border,
 .card-arc-border-warn,
 .card-arc-border-alert {
   border: 2px solid transparent !important;
   background:
     linear-gradient(var(--surface), var(--surface)) padding-box,
-    conic-gradient(from var(--card-arc),
-      transparent 0deg,
-      color-mix(in srgb, var(--arc-c, #007d55) calc(var(--arc-opacity) * 100%), transparent) 50deg,
-      transparent 90deg
-    ) border-box;
+    conic-gradient(from var(--card-arc), transparent 0deg, var(--arc-c, #007d55) 50deg, transparent 90deg) border-box;
   animation: arcSpin 5s linear infinite;
-}
-.card-arc-border-warn {
-  animation: arcSpin 5s linear infinite, flickerWarn 2.8s ease-in-out infinite;
-}
-.card-arc-border-alert {
-  animation: arcSpin 5s linear infinite, flickerAlert 1.6s ease-in-out infinite;
 }
 
 @keyframes fadeUp {
