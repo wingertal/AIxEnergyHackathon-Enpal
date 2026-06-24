@@ -97,48 +97,62 @@ body {
 .eyebrow {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 /* ── Type scale ────────────────────────────────────────────────
-   Five steps, each with one role. Use only these.
-   t-display  48 / 700   hero number per card  (monthly savings)
-   t-metric   24 / 600   every data value      (kW  %  €  °C)
-   t-heading  18 / 600   card & section titles
-   t-body     15 / 400   descriptions, content
-   t-label    12 / 500   eyebrows, captions, meta only
+   Seven steps. Each has one role. Use only these.
+   t-display  48 / 700   one hero KPI        (savings €333)
+   t-title    20 / 700   section / page titles (For you, Your equipment)
+   t-metric   20 / 600   status & bill KPIs  (49%  Free  €93  ~€140)
+   t-heading  16 / 600   card headings + card-level numbers
+   t-body     14 / 400   body text
+   t-caption  13 / 400   supporting captions (Your panels are making…)
+   t-label    11 / 500   eyebrows only       (SELF-POWERED TODAY)
    ──────────────────────────────────────────────────────────── */
 @layer utilities {
   .t-display {
     font-size: 48px;
     font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
   }
+  .t-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
   .t-metric {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
   .t-heading {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.3;
   }
   .t-body {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 1.6;
   }
+  .t-caption {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+  }
   .t-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1.4;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
   }
 }
 

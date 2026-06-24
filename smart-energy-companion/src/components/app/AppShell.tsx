@@ -158,7 +158,7 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
       >
         <Back />
       </button>
-      <h1 className="t-heading text-[var(--home)]">{title}</h1>
+      <h1 className="t-title text-[var(--home)]">{title}</h1>
     </header>
   );
 }
@@ -167,7 +167,7 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
 
 function Home({ data, go }: { data: AppData; go: (s: Screen) => void }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <LightStrip
         health={data.health}
         status={data.status}
@@ -232,8 +232,8 @@ function ForYou({ recs }: { recs: Recommendation[] }) {
 
   return (
     <section>
-      <div className="mb-2.5 flex items-center gap-2">
-        <h3 className="t-heading text-[var(--navy)]">For you</h3>
+      <div className="mb-3 flex items-center gap-2">
+        <h3 className="t-title text-[var(--navy)]">For you</h3>
         <div className="ml-auto flex gap-1.5">
           <CarouselArrow dir="prev" disabled={active === 0} onClick={() => goTo(active - 1)} />
           <CarouselArrow dir="next" disabled={active === recs.length - 1} onClick={() => goTo(active + 1)} />
@@ -316,7 +316,7 @@ function RecCard({ rec }: { rec: Recommendation }) {
               </span>
             )}
           </div>
-          <p className="mt-1 t-body text-[var(--foreground)]">{rec.detail}</p>
+          <p className="mt-1.5 t-caption">{rec.detail}</p>
         </div>
       </div>
     </div>
@@ -438,7 +438,7 @@ function SavingsHero({
         Saved in {label}
       </p>
       <div className="mt-2 t-display text-white">{eur(month.saved_eur, 0)}</div>
-      <p className="mt-2 t-body" style={{ color: "rgba(255,255,255,0.6)" }}>
+      <p className="mt-2 t-caption" style={{ color: "rgba(255,255,255,0.6)" }}>
         {eur(month.saved_from_solar_eur, 0)} from your own solar
         {month.feed_in_credit_eur > 0 && (
           <> · {eur(month.feed_in_credit_eur, 0)} feed-in credit</>
@@ -466,7 +466,7 @@ function SavingsHero({
           className="mt-4 rounded-xl px-3 py-2.5"
           style={{ background: "rgba(255,255,255,0.08)" }}
         >
-          <p className="t-body" style={{ color: "rgba(255,255,255,0.7)" }}>
+          <p className="t-caption" style={{ color: "rgba(255,255,255,0.7)" }}>
             💡 Add a battery — save about{" "}
             <span className="font-semibold text-white">€{batteryRec.annual_eur}/yr</span> more.
           </p>
@@ -486,8 +486,8 @@ function EquipmentSection({
 }) {
   return (
     <section>
-      <div className="mb-2.5 flex items-end justify-between">
-        <h3 className="t-heading text-[var(--home)]">Your equipment</h3>
+      <div className="mb-3 flex items-end justify-between">
+        <h3 className="t-title text-[var(--home)]">Your equipment</h3>
         <ConditionLegend />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -547,16 +547,16 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
       <div className="mt-2.5 t-heading text-[var(--home)]">
         {unit.name}
       </div>
-      <div className="mt-0.5 t-body leading-snug text-muted line-clamp-2">
+      <div className="mt-0.5 t-caption line-clamp-2">
         {unit.status}
       </div>
       {unit.impact && unit.today_eur !== undefined && (
-        <div className="mt-auto border-t pt-2.5">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="mt-auto border-t pt-2">
+          <div className="grid grid-cols-2 gap-1">
             <div>
               <p className="t-label text-muted">{unit.impact === "saving" ? "Saved today" : "Cost today"}</p>
               <p
-                className="t-metric"
+                className="t-heading"
                 style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
               >
                 {unit.impact === "saving" ? "+" : ""}{eur(unit.today_eur)}
@@ -565,7 +565,7 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
             <div>
               <p className="t-label text-muted">This month</p>
               <p
-                className="t-metric"
+                className="t-heading"
                 style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
               >
                 {unit.impact === "saving" ? "+" : ""}{eur(unit.month_eur ?? 0, 0)}
@@ -603,9 +603,7 @@ function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () 
           <h3 className="t-heading leading-snug text-[var(--home)]">
             {weather.recommendation.title}
           </h3>
-          <div className="mt-1 t-label text-muted tabular">
-            about {weather.avg_sun_hours}h of sun a day
-          </div>
+          <p className="mt-1 t-caption">about {weather.avg_sun_hours}h of sun a day</p>
         </div>
       </div>
     </button>
@@ -618,7 +616,7 @@ function LastWeek({ days }: { days: DailySaving[] }) {
   const best = days.reduce((a, b) => (b.saved_eur > a.saved_eur ? b : a), days[0]);
   return (
     <div className="card w-full p-5">
-      <h3 className="t-heading text-[var(--home)]">Last 7 days</h3>
+      <h3 className="t-title text-[var(--home)]">Last 7 days</h3>
       <div className="mt-3 space-y-2">
         {days.map((d) => {
           const isBest = d.date === best.date;
@@ -641,7 +639,7 @@ function LastWeek({ days }: { days: DailySaving[] }) {
           );
         })}
       </div>
-      <p className="mt-3 t-body text-muted">
+      <p className="mt-3 t-caption">
         {best.weekday} was your best day, you saved {eur(best.saved_eur)}.
       </p>
     </div>
@@ -662,7 +660,7 @@ function ChargeDetail({ data }: { data: AppData }) {
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-white" style={{ background: c.color }}>
           <Bolt className="h-7 w-7" />
         </span>
-        <h2 className="mt-4 t-metric text-[var(--home)]">{status.title}</h2>
+        <h2 className="mt-4 t-title text-[var(--home)]">{status.title}</h2>
         <p className="mt-2 t-body text-[var(--foreground)]">{status.reason}</p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 t-label">
           <span className="text-muted">Right now</span>
@@ -771,7 +769,7 @@ function SavingsDetail({ data }: { data: AppData }) {
       )}
 
       <div className="card p-5">
-        <h3 className="t-heading text-[var(--home)]">Last months</h3>
+        <h3 className="t-title text-[var(--home)]">Last months</h3>
         <div className="mt-4 flex items-end justify-between gap-2" style={{ height: 120 }}>
           {trend.map((m) => {
             const isNow = m.month === month.month;
@@ -831,7 +829,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                 <div>
                   <p className="t-label text-muted">{u.impact === "saving" ? "Saved today" : "Cost today"}</p>
                   <p
-                    className="t-metric tabular"
+                    className="t-metric tabular mt-0.5"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}{eur(u.today_eur)}
@@ -840,7 +838,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                 <div>
                   <p className="t-label text-muted">This month</p>
                   <p
-                    className="t-metric tabular"
+                    className="t-metric tabular mt-0.5"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}{eur(u.month_eur ?? 0, 0)}
@@ -861,7 +859,7 @@ function WeatherDetail({ data }: { data: AppData }) {
   return (
     <div className="space-y-4">
       <div className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
-        <h2 className="t-heading text-[var(--home)]">{weather.recommendation.title}</h2>
+        <h2 className="t-title text-[var(--home)]">{weather.recommendation.title}</h2>
         <p className="mt-2 t-body text-[var(--foreground)]">{weather.recommendation.detail}</p>
       </div>
 
