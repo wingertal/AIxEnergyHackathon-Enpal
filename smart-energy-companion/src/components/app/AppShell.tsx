@@ -27,7 +27,7 @@ import {
   UnitIcon,
   RecGlyph,
   HealthGlyph,
-  PiggyBank,
+
   REC_TONE,
   LIGHT_COLORS,
   HEALTH_COLORS,
@@ -124,14 +124,14 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
           <span className="text-[18px] font-bold tracking-tight text-[var(--navy)]">
             Enpal<span className="text-[var(--gold)]">.</span>
           </span>
-          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--navy)]">
+          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 t-label font-semibold text-[var(--navy)]">
             Coach
           </span>
         </div>
         <select
           value={data.household.id}
           onChange={(e) => onSwitch(e.target.value)}
-          className="rounded-full border bg-white px-3 py-1.5 text-[12.5px] font-medium text-[var(--home)] outline-none"
+          className="rounded-full border bg-white px-3 py-1.5 t-label font-medium text-[var(--home)] outline-none"
           aria-label="Switch household"
         >
           {data.households.map((h) => (
@@ -141,7 +141,7 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
           ))}
         </select>
       </div>
-      <h1 className="mt-4 text-[25.92px] font-semibold tracking-tight text-[var(--home)]">
+      <h1 className="mt-4 t-metric font-semibold tracking-tight text-[var(--home)]">
         {data.greeting}, {data.household.name.replace("Familie ", "").replace("WG ", "")}.
       </h1>
     </header>
@@ -158,7 +158,7 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
       >
         <Back />
       </button>
-      <h1 className="text-[18px] font-semibold text-[var(--home)]">{title}</h1>
+      <h1 className="t-heading text-[var(--home)]">{title}</h1>
     </header>
   );
 }
@@ -167,37 +167,30 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
 
 function Home({ data, go }: { data: AppData; go: (s: Screen) => void }) {
   return (
-    <div className="space-y-5">
-      {/* --- our coach layer, leading the homepage --- */}
-      <div>
-        <p className="eyebrow mb-2">Energy status</p>
-        <LightStrip
-          health={data.health}
-          status={data.status}
-          onClick={() => go({ name: "charge" })}
-        />
-      </div>
-      <div>
-        <p className="eyebrow mb-2">Savings</p>
-        <SavingsHero
-          month={data.month}
-          mtd={data.monthToDate}
-          comparison={data.billComparison}
-          batteryRec={data.batteryRec}
-          label={data.monthLabel}
-          onClick={() => go({ name: "savings" })}
-        />
-      </div>
+    <div className="space-y-4">
+      <LightStrip
+        health={data.health}
+        status={data.status}
+        onClick={() => go({ name: "charge" })}
+      />
+      <ForYou recs={data.recommendations} />
+      <SavingsHero
+        month={data.month}
+        mtd={data.monthToDate}
+        comparison={data.billComparison}
+        batteryRec={data.batteryRec}
+        label={data.monthLabel}
+        onClick={() => go({ name: "savings" })}
+      />
       <EquipmentSection
         units={data.equipment}
         onOpen={(unit) => go({ name: "equipment", unit })}
       />
-      <ForYou recs={data.recommendations} />
       <WeekAhead weather={data.weather} onClick={() => go({ name: "weather" })} />
 
       <button
         onClick={() => go({ name: "ask" })}
-        className="w-full rounded-2xl bg-[var(--home)] py-3.5 text-[15px] font-medium text-white transition active:opacity-90"
+        className="w-full rounded-2xl bg-[var(--navy)] py-4 t-body font-medium text-white transition active:opacity-90"
       >
         Ask a question
       </button>
@@ -240,12 +233,7 @@ function ForYou({ recs }: { recs: Recommendation[] }) {
   return (
     <section>
       <div className="mb-2.5 flex items-center gap-2">
-        <h3 className="text-[18px] font-semibold text-[var(--navy)]">
-          Your energy coach
-        </h3>
-        <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--navy)]">
-          {recs.length} tips
-        </span>
+        <h3 className="t-heading text-[var(--navy)]">For you</h3>
         <div className="ml-auto flex gap-1.5">
           <CarouselArrow dir="prev" disabled={active === 0} onClick={() => goTo(active - 1)} />
           <CarouselArrow dir="next" disabled={active === recs.length - 1} onClick={() => goTo(active + 1)} />
@@ -318,17 +306,17 @@ function RecCard({ rec }: { rec: Recommendation }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h4 className="text-[18px] font-semibold leading-snug text-[var(--navy)]">{rec.title}</h4>
+            <h4 className="t-heading leading-snug text-[var(--navy)]">{rec.title}</h4>
             {rec.saving && (
               <span
-                className="shrink-0 rounded-full px-2 py-0.5 text-[12.5px] font-semibold tabular"
+                className="shrink-0 rounded-full px-2 py-0.5 t-label font-semibold tabular"
                 style={{ background: t.soft, color: t.color }}
               >
                 {rec.saving}
               </span>
             )}
           </div>
-          <p className="mt-1 text-[15px] leading-relaxed text-[var(--foreground)]">{rec.detail}</p>
+          <p className="mt-1 t-body text-[var(--foreground)]">{rec.detail}</p>
         </div>
       </div>
     </div>
@@ -357,61 +345,62 @@ function LightStrip({
 }) {
   const c = HEALTH_COLORS[health.level];
   const mix = status.mix;
+  const onOwnPower = gridShare(status) < 15;
   return (
     <button onClick={onClick} className="card card-interactive w-full p-4 text-left">
+      {/* Status header */}
       <div className="flex items-start gap-3">
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white"
-          style={{ background: c.color }}
-        >
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--navy)] text-white">
           <HealthGlyph level={health.level} />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <p className="t-label text-muted">Status</p>
+          <div className="mt-0.5 flex items-center gap-2">
             <span
-              className="live-dot inline-block h-2 w-2 rounded-full"
+              className="live-dot inline-block h-2 w-2 shrink-0 rounded-full"
               style={{ background: c.color }}
             />
-            <span className="text-[18px] font-semibold text-[var(--home)]">
-              {health.title}
-            </span>
-            <span
-              className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold"
-              style={{ background: c.soft, color: c.color }}
-            >
-              {health.badge}
-            </span>
+            <span className="t-heading text-[var(--home)]">{health.title}</span>
           </div>
-          <p className="mt-1 text-[15px] leading-relaxed text-[var(--foreground)]">{health.reason}</p>
+        </div>
+        <Chevron />
+      </div>
+
+      {/* Key metrics grid */}
+      <div className="mt-4 grid grid-cols-2 border-t pt-4">
+        <div className="pr-4">
+          <p className="eyebrow mb-1">Self-powered today</p>
+          <p className="t-metric text-[var(--home)]">{health.self_sufficiency_pct}%</p>
+        </div>
+        <div className="border-l pl-4">
+          <p className="eyebrow mb-1">Power now</p>
+          <p
+            className="t-metric"
+            style={{ color: onOwnPower ? "var(--battery)" : "var(--home)" }}
+          >
+            {onOwnPower ? "Free" : `${status.price_cents}c`}
+          </p>
         </div>
       </div>
 
-      {mix.sources.length > 0 && (
+      {/* Cheapest hours (dynamic tariff only) */}
+      {!mix.sources.every?.((s) => s.key === "solar") && mix.sources.length > 0 && (
         <div className="mt-3">
-          <div className="flex h-2 overflow-hidden rounded-full bg-[var(--background)]">
+          <div className="flex h-1.5 overflow-hidden rounded-full bg-[var(--background)]">
             {mix.sources.map((s) => (
               <div key={s.key} style={{ width: `${s.pct}%`, background: SOURCE_COLOR[s.key] }} />
             ))}
           </div>
-          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[12.5px] text-muted">
+          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
             {mix.sources.map((s) => (
-              <span key={s.key} className="inline-flex items-center gap-1 tabular">
-                <span className="inline-block h-2 w-2 rounded-full" style={{ background: SOURCE_COLOR[s.key] }} />
+              <span key={s.key} className="t-label inline-flex items-center gap-1 text-muted tabular">
+                <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: SOURCE_COLOR[s.key] }} />
                 {s.pct}% {s.label}
               </span>
             ))}
           </div>
         </div>
       )}
-
-      <div className="mt-2.5 flex items-center justify-between border-t pt-2.5 text-[12.5px] text-muted tabular">
-        <span>
-          Using {health.consumption_kw} kW · {health.self_sufficiency_pct}% self-supplied
-        </span>
-        <span className="inline-flex items-center gap-0.5 font-medium text-[var(--home)]">
-          Best time to use power <Chevron />
-        </span>
-      </div>
     </button>
   );
 }
@@ -432,82 +421,58 @@ function SavingsHero({
   label: string;
   onClick: () => void;
 }) {
-  return (
-    <button onClick={onClick} className="card card-interactive w-full p-6 text-left">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span
-            className="flex h-8 w-8 items-center justify-center rounded-xl"
-            style={{ background: "var(--battery-soft)", color: "var(--battery)" }}
-          >
-            <PiggyBank />
-          </span>
-          <span className="text-[12.5px] font-medium text-muted">Saved in {label}</span>
-        </div>
-        <TrendPill comparison={comparison} />
-      </div>
+  const { verdict, delta_eur } = comparison;
+  const deltaAmt = eur(Math.abs(delta_eur), 0);
+  const trendText =
+    verdict === "better"
+      ? `↓ ${deltaAmt} cheaper than last month`
+      : verdict === "worse"
+      ? `↑ ${deltaAmt} more than last month`
+      : "→ Same as last month";
+  const trendColor =
+    verdict === "better" ? "#6ee7b7" : verdict === "worse" ? "#fca5a5" : "rgba(255,255,255,0.45)";
 
-      <div className="mt-3 text-[46px] font-semibold leading-none tabular text-[var(--battery)]">
-        {eur(month.saved_eur, 0)}
-      </div>
-      <p className="mt-2 text-[15px] leading-snug text-[var(--foreground)]">
-        {eur(month.saved_from_solar_eur, 0)} from using your own solar
+  return (
+    <button onClick={onClick} className="card-navy card-interactive w-full p-6 text-left">
+      <p className="t-label uppercase" style={{ color: "rgba(255,255,255,0.5)" }}>
+        Saved in {label}
+      </p>
+      <div className="mt-2 t-display text-white">{eur(month.saved_eur, 0)}</div>
+      <p className="mt-2 t-body" style={{ color: "rgba(255,255,255,0.6)" }}>
+        {eur(month.saved_from_solar_eur, 0)} from your own solar
         {month.feed_in_credit_eur > 0 && (
-          <> + {eur(month.feed_in_credit_eur, 0)} from selling surplus back</>
-        )}
-        .
+          <> · {eur(month.feed_in_credit_eur, 0)} feed-in credit</>
+        )}.
       </p>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 border-t pt-4">
-        <div>
-          <div className="text-[12.5px] text-muted">Spent so far</div>
-          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
-            {eur(mtd.so_far_eur, 0)}
-          </div>
+      <div
+        className="mt-5 grid grid-cols-2 border-t pt-4"
+        style={{ borderColor: "rgba(255,255,255,0.12)" }}
+      >
+        <div className="pr-4">
+          <p className="t-label" style={{ color: "rgba(255,255,255,0.45)" }}>Bill so far</p>
+          <p className="t-metric text-white">{eur(mtd.so_far_eur, 0)}</p>
         </div>
-        <div>
-          <div className="text-[12.5px] text-muted">Projected total</div>
-          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
-            ~{eur(mtd.likely_total_eur, 0)}
-          </div>
+        <div className="pl-4" style={{ borderLeft: "1px solid rgba(255,255,255,0.12)" }}>
+          <p className="t-label" style={{ color: "rgba(255,255,255,0.45)" }}>Likely total</p>
+          <p className="t-metric text-white">~{eur(mtd.likely_total_eur, 0)}</p>
         </div>
       </div>
+
+      <p className="mt-4 t-label" style={{ color: trendColor }}>{trendText}</p>
 
       {batteryRec && (
         <div
-          className="mt-4 flex items-start gap-2 rounded-xl px-3 py-2.5"
-          style={{ background: "var(--battery-soft)" }}
+          className="mt-4 rounded-xl px-3 py-2.5"
+          style={{ background: "rgba(255,255,255,0.08)" }}
         >
-          <span className="text-[15px] leading-none">💡</span>
-          <span className="text-[15px] leading-snug text-[var(--home)]">
-            Save about{" "}
-            <span className="font-semibold text-[var(--battery)]">€{batteryRec.annual_eur}/yr</span>{" "}
-            more with a home battery, store your spare solar instead of selling it cheaply.
-          </span>
+          <p className="t-body" style={{ color: "rgba(255,255,255,0.7)" }}>
+            💡 Add a battery — save about{" "}
+            <span className="font-semibold text-white">€{batteryRec.annual_eur}/yr</span> more.
+          </p>
         </div>
       )}
     </button>
-  );
-}
-
-/** Compact savings/bill trend chip (cheaper / pricier / steady vs last 2 months). */
-function TrendPill({ comparison }: { comparison: BillComparison }) {
-  const { verdict, delta_eur } = comparison;
-  const amount = eur(Math.abs(delta_eur), 0);
-  const cfg =
-    verdict === "better"
-      ? { bg: "var(--battery-soft)", fg: "var(--battery)", icon: "↓", text: `${amount} cheaper` }
-      : verdict === "worse"
-      ? { bg: "#fae3e2", fg: "var(--danger)", icon: "↑", text: `${amount} more` }
-      : { bg: "var(--background)", fg: "var(--muted)", icon: "→", text: "same as last mo." };
-  return (
-    <span
-      className="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[12.5px] font-semibold tabular"
-      style={{ background: cfg.bg, color: cfg.fg }}
-    >
-      <span>{cfg.icon}</span>
-      {cfg.text}
-    </span>
   );
 }
 
@@ -522,7 +487,7 @@ function EquipmentSection({
   return (
     <section>
       <div className="mb-2.5 flex items-end justify-between">
-        <h3 className="text-[18px] font-semibold text-[var(--home)]">Your equipment</h3>
+        <h3 className="t-heading text-[var(--home)]">Your equipment</h3>
         <ConditionLegend />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -536,7 +501,7 @@ function EquipmentSection({
 
 function ConditionLegend() {
   return (
-    <div className="flex items-center gap-2.5 text-[10.5px] text-muted">
+    <div className="flex items-center gap-2.5 t-label text-muted">
       <span className="inline-flex items-center gap-1">
         <Dot c="green" /> fine
       </span>
@@ -579,35 +544,33 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
           aria-hidden
         />
       </div>
-      <div className="mt-2.5 text-[18px] font-semibold text-[var(--home)]">
+      <div className="mt-2.5 t-heading text-[var(--home)]">
         {unit.name}
       </div>
-      <div className="mt-0.5 text-[15px] leading-snug text-muted line-clamp-2">
+      <div className="mt-0.5 t-body leading-snug text-muted line-clamp-2">
         {unit.status}
       </div>
       {unit.impact && unit.today_eur !== undefined && (
-        <div className="mt-auto space-y-0.5 border-t pt-2 text-[10.5px] tabular">
-          <div className="flex items-center justify-between">
-            <span className="text-muted">
-              {unit.impact === "saving" ? "Saved today" : "Cost today"}
-            </span>
-            <span
-              className="font-semibold"
-              style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
-            >
-              {unit.impact === "saving" ? "+" : ""}
-              {eur(unit.today_eur)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-muted">This month</span>
-            <span
-              className="font-semibold"
-              style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
-            >
-              {unit.impact === "saving" ? "+" : ""}
-              {eur(unit.month_eur ?? 0, 0)}
-            </span>
+        <div className="mt-auto border-t pt-2.5">
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <p className="t-label text-muted">{unit.impact === "saving" ? "Saved today" : "Cost today"}</p>
+              <p
+                className="t-metric"
+                style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+              >
+                {unit.impact === "saving" ? "+" : ""}{eur(unit.today_eur)}
+              </p>
+            </div>
+            <div>
+              <p className="t-label text-muted">This month</p>
+              <p
+                className="t-metric"
+                style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+              >
+                {unit.impact === "saving" ? "+" : ""}{eur(unit.month_eur ?? 0, 0)}
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -631,16 +594,16 @@ function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () 
       style={{ borderLeftColor: c.color }}
     >
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[12.5px] font-medium uppercase tracking-wide text-muted">This week</span>
+        <span className="t-label font-medium uppercase tracking-wide text-muted">This week</span>
         <Chevron />
       </div>
       <div className="flex items-center gap-4">
         <Sky icon={icon} size={44} />
         <div className="min-w-0 flex-1">
-          <h3 className="text-[18px] font-semibold leading-snug text-[var(--home)]">
+          <h3 className="t-heading leading-snug text-[var(--home)]">
             {weather.recommendation.title}
           </h3>
-          <div className="mt-1 text-[12.5px] text-muted tabular">
+          <div className="mt-1 t-label text-muted tabular">
             about {weather.avg_sun_hours}h of sun a day
           </div>
         </div>
@@ -655,13 +618,13 @@ function LastWeek({ days }: { days: DailySaving[] }) {
   const best = days.reduce((a, b) => (b.saved_eur > a.saved_eur ? b : a), days[0]);
   return (
     <div className="card w-full p-5">
-      <h3 className="text-[18px] font-semibold text-[var(--home)]">Last 7 days</h3>
+      <h3 className="t-heading text-[var(--home)]">Last 7 days</h3>
       <div className="mt-3 space-y-2">
         {days.map((d) => {
           const isBest = d.date === best.date;
           return (
             <div key={d.date} className="flex items-center gap-2.5">
-              <span className="w-8 text-[12.5px] text-muted">{d.weekday}</span>
+              <span className="w-8 t-label text-muted">{d.weekday}</span>
               <div className="h-3 flex-1 overflow-hidden rounded-full bg-[var(--background)]">
                 <div
                   className="h-full rounded-full"
@@ -671,14 +634,14 @@ function LastWeek({ days }: { days: DailySaving[] }) {
                   }}
                 />
               </div>
-              <span className="w-12 text-right text-[12.5px] font-medium text-[var(--home)] tabular">
+              <span className="w-12 text-right t-label font-medium text-[var(--home)] tabular">
                 {eur(d.saved_eur)}
               </span>
             </div>
           );
         })}
       </div>
-      <p className="mt-3 text-[15px] text-muted">
+      <p className="mt-3 t-body text-muted">
         {best.weekday} was your best day, you saved {eur(best.saved_eur)}.
       </p>
     </div>
@@ -699,9 +662,9 @@ function ChargeDetail({ data }: { data: AppData }) {
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-white" style={{ background: c.color }}>
           <Bolt className="h-7 w-7" />
         </span>
-        <h2 className="mt-4 text-[21.6px] font-semibold text-[var(--home)]">{status.title}</h2>
-        <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{status.reason}</p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 text-[12.5px]">
+        <h2 className="mt-4 t-metric text-[var(--home)]">{status.title}</h2>
+        <p className="mt-2 t-body text-[var(--foreground)]">{status.reason}</p>
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 t-label">
           <span className="text-muted">Right now</span>
           {onOwnPower ? (
             <span className="font-semibold text-[var(--battery)]">free · your own solar</span>
@@ -714,17 +677,17 @@ function ChargeDetail({ data }: { data: AppData }) {
       <div className="card p-5">
         {flatRate ? (
           <>
-            <h3 className="text-[18px] font-semibold text-[var(--home)]">
+            <h3 className="t-heading text-[var(--home)]">
               Your grid price today
             </h3>
             <div className="mt-3 rounded-xl bg-[var(--background)] px-4 py-4 text-center">
-              <div className="text-[24px] font-semibold text-[var(--home)] tabular">
+              <div className="t-metric text-[var(--home)] tabular">
                 {(windows[0].price * 100).toFixed(1)}c
-                <span className="text-[12.5px] font-normal text-muted">/kWh</span>
+                <span className="t-label font-normal text-muted">/kWh</span>
               </div>
-              <div className="mt-1 text-[12.5px] text-muted">same price all day</div>
+              <div className="mt-1 t-label text-muted">same price all day</div>
             </div>
-            <p className="mt-3 text-[15px] leading-relaxed text-[var(--foreground)]">
+            <p className="mt-3 t-body text-[var(--foreground)]">
               You&apos;re on a fixed price, so grid power costs the same at every hour. Run
               appliances whenever suits you, and use your own solar first since it&apos;s
               cheaper than the grid.
@@ -732,7 +695,7 @@ function ChargeDetail({ data }: { data: AppData }) {
           </>
         ) : (
           <>
-            <h3 className="text-[18px] font-semibold text-[var(--home)]">
+            <h3 className="t-heading text-[var(--home)]">
               Cheapest times to use power today
             </h3>
             <div className="mt-3 flex gap-2">
@@ -742,12 +705,12 @@ function ChargeDetail({ data }: { data: AppData }) {
                   className="flex-1 rounded-xl px-3 py-2.5 text-center"
                   style={{ background: w.rank === 1 ? c.soft : "var(--background)" }}
                 >
-                  <div className="text-[18px] font-semibold text-[var(--home)] tabular">{w.time}</div>
-                  <div className="text-[12.5px] text-muted tabular">{(w.price * 100).toFixed(1)}c</div>
+                  <div className="t-heading text-[var(--home)] tabular">{w.time}</div>
+                  <div className="t-label text-muted tabular">{(w.price * 100).toFixed(1)}c</div>
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-[15px] leading-relaxed text-[var(--foreground)]">
+            <p className="mt-3 t-body text-[var(--foreground)]">
               {onOwnPower
                 ? "Your solar is covering the home for free right now. When you do need the grid, in the evening or for the car, these are today's cheapest hours."
                 : "Run the dishwasher, laundry or EV charging in these windows to pay the least."}
@@ -766,29 +729,25 @@ function SavingsDetail({ data }: { data: AppData }) {
   return (
     <div className="space-y-4">
       <div className="card p-6">
-        <span className="text-[12.5px] font-medium text-muted">In {monthLabel}</span>
-        <div className="mt-3 flex items-end justify-between">
+        <p className="eyebrow">In {monthLabel}</p>
+        <div className="mt-3 grid grid-cols-2 gap-4">
           <div>
-            <div className="text-[12.5px] text-muted">You saved</div>
-            <div className="text-[30px] font-semibold leading-none tabular text-[var(--battery)]">
-              {eur(month.saved_eur, 0)}
-            </div>
+            <p className="t-label text-muted">You saved</p>
+            <p className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</p>
           </div>
-          <div className="text-right">
-            <div className="text-[12.5px] text-muted">You paid</div>
-            <div className="text-[22px] font-semibold leading-none tabular text-[var(--home)]">
-              {eur(month.paid_eur, 0)}
-            </div>
+          <div>
+            <p className="t-label text-muted">You paid</p>
+            <p className="t-metric text-[var(--home)]">{eur(month.paid_eur, 0)}</p>
           </div>
         </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground)]">
+        <p className="mt-4 t-body text-[var(--foreground)]">
           Without your solar, this month would have cost about{" "}
           <span className="font-semibold text-[var(--home)]">{eur(month.bill_without_solar_eur, 0)}</span>. You
           used {month.self_consumed_kwh.toFixed(0)} kWh of your own power and earned{" "}
           {eur(month.feed_in_credit_eur)} feeding surplus back.
         </p>
         {tariffSaving > 0 && (
-          <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">
+          <p className="mt-2 t-body text-[var(--foreground)]">
             Your tariff is also a good fit, about{" "}
             <span className="font-semibold text-[var(--home)]">{eur(tariffSaving, 0)}/yr</span> cheaper than a
             standard plan.
@@ -800,9 +759,9 @@ function SavingsDetail({ data }: { data: AppData }) {
         <div className="card border-l-4 p-5" style={{ borderLeftColor: "var(--solar)" }}>
           <div className="flex items-center gap-2">
             <span>💡</span>
-            <h3 className="text-[18px] font-semibold text-[var(--home)]">Money on the table</h3>
+            <h3 className="t-heading text-[var(--home)]">Money on the table</h3>
           </div>
-          <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">
+          <p className="mt-2 t-body text-[var(--foreground)]">
             You sent <span className="font-semibold text-[var(--home)]">{batteryRec.exported_kwh.toFixed(0)} kWh</span> of
             spare solar to the grid this year for a small feed-in payment. A home battery (~{batteryRec.suggested_kwh} kWh)
             would store it for the evening instead, saving roughly{" "}
@@ -812,7 +771,7 @@ function SavingsDetail({ data }: { data: AppData }) {
       )}
 
       <div className="card p-5">
-        <h3 className="text-[18px] font-semibold text-[var(--home)]">Last months</h3>
+        <h3 className="t-heading text-[var(--home)]">Last months</h3>
         <div className="mt-4 flex items-end justify-between gap-2" style={{ height: 120 }}>
           {trend.map((m) => {
             const isNow = m.month === month.month;
@@ -825,14 +784,14 @@ function SavingsDetail({ data }: { data: AppData }) {
                     style={{ height: `${(m.paid_eur / maxVal) * 100}%`, background: isNow ? "var(--home)" : "var(--border)" }}
                   />
                 </div>
-                <span className={`text-[10.5px] ${isNow ? "font-semibold text-[var(--home)]" : "text-muted"}`}>
+                <span className={`t-label ${isNow ? "font-semibold text-[var(--home)]" : "text-muted"}`}>
                   {m.month.slice(5)}
                 </span>
               </div>
             );
           })}
         </div>
-        <div className="mt-3 flex gap-4 text-[12.5px] text-muted">
+        <div className="mt-3 flex gap-4 t-label text-muted">
           <Legend color="var(--battery)" label="saved" />
           <Legend color="var(--home)" label="paid" />
         </div>
@@ -857,39 +816,35 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2" style={{ color: c.color }}>
                 <UnitIcon unit={u.key} />
-                <span className="text-[18px] font-semibold text-[var(--home)]">{u.name}</span>
+                <span className="t-heading text-[var(--home)]">{u.name}</span>
               </span>
               <span
-                className="rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold"
+                className="rounded-full px-2.5 py-0.5 t-label font-semibold"
                 style={{ background: c.soft, color: c.color }}
               >
                 {u.status}
               </span>
             </div>
-            <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{u.why}</p>
+            <p className="mt-2 t-body text-[var(--foreground)]">{u.why}</p>
             {u.impact && u.today_eur !== undefined && (
-              <div className="mt-3 flex gap-6 border-t pt-3">
+              <div className="mt-3 grid grid-cols-2 gap-4 border-t pt-3">
                 <div>
-                  <div className="text-[12.5px] text-muted">
-                    {u.impact === "saving" ? "Saved today" : "Cost today"}
-                  </div>
-                  <div
-                    className="text-[18px] font-semibold tabular"
+                  <p className="t-label text-muted">{u.impact === "saving" ? "Saved today" : "Cost today"}</p>
+                  <p
+                    className="t-metric tabular"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
-                    {u.impact === "saving" ? "+" : ""}
-                    {eur(u.today_eur)}
-                  </div>
+                    {u.impact === "saving" ? "+" : ""}{eur(u.today_eur)}
+                  </p>
                 </div>
                 <div>
-                  <div className="text-[12.5px] text-muted">This month</div>
-                  <div
-                    className="text-[18px] font-semibold tabular"
+                  <p className="t-label text-muted">This month</p>
+                  <p
+                    className="t-metric tabular"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
-                    {u.impact === "saving" ? "+" : ""}
-                    {eur(u.month_eur ?? 0, 0)}
-                  </div>
+                    {u.impact === "saving" ? "+" : ""}{eur(u.month_eur ?? 0, 0)}
+                  </p>
                 </div>
               </div>
             )}
@@ -906,26 +861,26 @@ function WeatherDetail({ data }: { data: AppData }) {
   return (
     <div className="space-y-4">
       <div className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
-        <h2 className="text-[18px] font-semibold text-[var(--home)]">{weather.recommendation.title}</h2>
-        <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground)]">{weather.recommendation.detail}</p>
+        <h2 className="t-heading text-[var(--home)]">{weather.recommendation.title}</h2>
+        <p className="mt-2 t-body text-[var(--foreground)]">{weather.recommendation.detail}</p>
       </div>
 
       <div className="card p-3">
         {weather.days.map((d, i) => (
           <div key={d.date} className={`flex items-center gap-3 px-2 py-2.5 ${i > 0 ? "border-t" : ""}`}>
-            <span className="w-9 text-[12.5px] font-medium text-[var(--home)]">{d.weekday}</span>
+            <span className="w-9 t-label font-medium text-[var(--home)]">{d.weekday}</span>
             <Sky icon={d.icon} size={22} />
-            <span className="w-10 text-[12.5px] tabular text-[var(--home)]">{d.temp_c}°</span>
+            <span className="w-10 t-label tabular text-[var(--home)]">{d.temp_c}°</span>
             <div className="flex-1">
               <div className="h-1.5 overflow-hidden rounded-full bg-[var(--background)]">
                 <div className="h-full rounded-full" style={{ width: `${(d.sun_hours / 11) * 100}%`, background: "var(--solar)" }} />
               </div>
             </div>
-            <span className="w-12 text-right text-[12.5px] text-muted tabular">{d.sun_hours}h sun</span>
+            <span className="w-12 text-right t-label text-muted tabular">{d.sun_hours}h sun</span>
           </div>
         ))}
       </div>
-      <p className="px-1 text-[12.5px] text-muted">
+      <p className="px-1 t-label text-muted">
         Forecast for {weather.city}. Solar potential shown as daily sun hours.
       </p>
     </div>
