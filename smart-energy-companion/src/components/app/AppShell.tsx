@@ -352,7 +352,7 @@ function LightStrip({
   const onOwnPower = gridShare(status) < 15;
   return (
     <button onClick={onClick} className="card card-interactive w-full p-4 text-left">
-      {/* Status header — no icon, dot carries the color signal */}
+      {/* Status header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
@@ -384,6 +384,7 @@ function LightStrip({
           </p>
         </div>
       </div>
+
     </button>
   );
 }
@@ -421,16 +422,17 @@ function SavingsHero({
 
   return (
     <button onClick={onClick} className="card card-interactive w-full p-5 text-left">
-      <div className="mb-3 flex items-center justify-between">
-        <span className="t-heading text-[var(--home)]">in {label}</span>
+      <div className="flex items-start justify-between">
+        <div className="flex items-baseline gap-2">
+          <span className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</span>
+          <span className="t-body text-muted">in {label}</span>
+        </div>
         {badgeText && badgeStyle && (
-          <span className="rounded-full px-2.5 py-1 t-label font-semibold" style={badgeStyle}>
+          <span className="ml-2 shrink-0 rounded-full px-2.5 py-1 t-label font-semibold" style={badgeStyle}>
             {badgeText}
           </span>
         )}
       </div>
-
-      <div className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</div>
       <p className="mt-1.5 t-caption">
         {eur(month.saved_from_solar_eur, 0)} from using your own solar
         {month.feed_in_credit_eur > 0 && (

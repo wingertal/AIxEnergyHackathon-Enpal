@@ -69,6 +69,7 @@ export function WebShell({ data }: { data: AppData }) {
               mtd={data.monthToDate}
               comparison={data.billComparison}
               label={data.monthLabel}
+              dataDate={data.dataDate}
             />
             <EquipmentPanel units={data.equipment} />
             <RecommendationsPanel recs={data.recommendations} />
@@ -160,106 +161,41 @@ function StatusPanel({
   windows: PriceWindow[];
 }) {
   const c = HEALTH_COLORS[health.level];
-  const mix = status.mix;
-  // Fixed-tariff homes have one flat price all day, so "cheapest hours" is meaningless.
+  const onOwnPower = (status.mix.sources.find((s) => s.key === "grid")?.pct ?? 0) < 15;
   const flatRate = windows.length > 0 && windows.every((w) => w.price === windows[0].price);
   return (
-    <section className="card p-6">
+    <section>
       <p className="eyebrow mb-3">Energy status</p>
-      <div className="flex items-start gap-4">
-        <span
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white"
-          style={{ background: c.color }}
-        >
-          <HealthGlyph level={health.level} />
-        </span>
-        <div className="min-w-0 flex-1">
+      <div className="card p-6">
+        {/* Header row — matches mobile LightStrip */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span
-              className="live-dot inline-block h-2 w-2 rounded-full"
-              style={{ background: c.color }}
-            />
-            <h2 className="text-[18px] font-semibold text-[var(--home)]">
-              {health.title}
-            </h2>
-            <span
-              className="ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold"
-              style={{ background: c.soft, color: c.color }}
-            >
-              {health.badge}
-            </span>
+            <span className="live-dot inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: c.color }} />
+            <h2 className="text-[18px] font-semibold text-[var(--home)]">{health.title}</h2>
           </div>
-          <p className="mt-1.5 max-w-[60ch] text-[15px] leading-relaxed text-[var(--foreground)]">
-            {health.reason}
-          </p>
-          <p className="mt-2 text-[15px] text-muted tabular">
-            Using {health.consumption_kw} kW · {health.self_sufficiency_pct}% self-supplied · grid {health.price_cents}c/kWh
-          </p>
+          <span className="rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold" style={{ background: c.soft, color: c.color }}>
+            {health.badge}
+          </span>
         </div>
-      </div>
 
-      {mix.sources.length > 0 && (
-        <div className="mt-5">
-          <div className="flex h-2.5 overflow-hidden rounded-full bg-[var(--background)]">
-            {mix.sources.map((s) => (
-              <div
-                key={s.key}
-                style={{ width: `${s.pct}%`, background: SOURCE_COLOR[s.key] }}
-              />
-            ))}
+        {/* Three metrics — same fields as mobile */}
+        <div className="mt-4 grid grid-cols-3 divide-x border-t pt-4">
+          <div className="pr-4">
+            <p className="eyebrow mb-1">Self-powered</p>
+            <p className="text-[20px] font-semibold text-[var(--home)] tabular">{health.self_sufficiency_pct}%</p>
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted">
-            {mix.sources.map((s) => (
-              <span key={s.key} className="inline-flex items-center gap-1.5 tabular">
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: SOURCE_COLOR[s.key] }}
-                />
-                {s.pct}% {s.label}
-              </span>
-            ))}
+          <div className="px-4">
+            <p className="eyebrow mb-1">Using now</p>
+            <p className="text-[20px] font-semibold text-[var(--home)] tabular">{status.house_load_kw.toFixed(1)} kW</p>
+          </div>
+          <div className="pl-4">
+            <p className="eyebrow mb-1">Power cost</p>
+            <p className="text-[20px] font-semibold tabular" style={{ color: onOwnPower ? "var(--battery)" : "var(--home)" }}>
+              {onOwnPower ? "Free" : `${status.price_cents}c`}
+            </p>
           </div>
         </div>
-      )}
 
-      <div className="mt-5 border-t pt-4">
-        {flatRate ? (
-          <>
-            <h3 className="text-[18px] font-semibold text-[var(--home)]">Your grid price today</h3>
-            <div className="mt-3 flex items-center gap-3 rounded-xl bg-[var(--background)] px-4 py-3">
-              <div className="text-[20px] font-semibold text-[var(--home)] tabular">
-                {(windows[0].price * 100).toFixed(1)}c
-                <span className="text-[15px] font-normal text-muted">/kWh</span>
-              </div>
-              <span className="text-[15px] text-muted">
-                Fixed price, the same every hour. Run appliances whenever suits you, and use
-                your own solar first since it&apos;s cheaper than the grid.
-              </span>
-            </div>
-          </>
-        ) : (
-          <>
-            <h3 className="text-[18px] font-semibold text-[var(--home)]">
-              Cheapest times to use power today
-            </h3>
-            <div className="mt-3 flex gap-3">
-              {windows.map((w) => (
-                <div
-                  key={w.time}
-                  className="flex-1 rounded-xl px-3 py-3 text-center"
-                  style={{ background: w.rank === 1 ? c.soft : "var(--background)" }}
-                >
-                  <div className="text-[18px] font-semibold text-[var(--home)] tabular">
-                    {w.time}
-                  </div>
-                  <div className="text-[12.5px] text-muted tabular">
-                    {(w.price * 100).toFixed(1)}c
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </section>
   );
@@ -408,23 +344,26 @@ function SavingsPanel({
   mtd,
   comparison,
   label,
+  dataDate,
 }: {
   month: MonthSummary;
   mtd: MonthToDate;
   comparison: BillComparison;
   label: string;
+  dataDate: string;
 }) {
   return (
     <section>
       <p className="eyebrow mb-3">Savings</p>
       <div className="card p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-[18px] font-semibold text-[var(--home)]">in {label}</span>
+        <div className="flex items-start justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
+              {eur(month.saved_eur, 0)}
+            </span>
+            <span className="text-[15px] text-muted">in {label}</span>
+          </div>
           <TrendPill comparison={comparison} />
-        </div>
-
-        <div className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
-          {eur(month.saved_eur, 0)}
         </div>
         <p className="mt-2 text-[14px] leading-snug text-muted">
           {eur(month.saved_from_solar_eur, 0)} from using your own solar
