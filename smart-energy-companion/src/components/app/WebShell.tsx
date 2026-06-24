@@ -19,6 +19,7 @@ import { eur } from "@/lib/format";
 import {
   Sky,
   UnitIcon,
+  WeatherHeroIcon,
   RecGlyph,
   HealthGlyph,
 
@@ -653,66 +654,23 @@ function Legend({ color, label }: { color: string; label: string }) {
 
 /* ----------------------------------------------------------------- weather */
 
-const SKY_BG: Record<string, string> = {
-  sun:    "linear-gradient(155deg, #1260b8 0%, #2e8de8 55%, #62b8ff 100%)",
-  partly: "linear-gradient(155deg, #1a6ec4 0%, #5090c8 60%, #90c4e8 100%)",
-  cloud:  "linear-gradient(155deg, #4c5f6e 0%, #6e8494 60%, #a0b4be 100%)",
-  rain:   "linear-gradient(155deg, #243240 0%, #3a5060 60%, #5a7884 100%)",
-};
-
 function WeatherPanel({ weather }: { weather: WeatherOutlook }) {
   const today = weather.days[0];
-  const rest = weather.days.slice(1);
-  const bg = today ? (SKY_BG[today.icon] ?? SKY_BG.cloud) : SKY_BG.cloud;
-  const skyFilter = (icon: string) =>
-    icon === "sun"
-      ? "drop-shadow(0 0 6px rgba(255,210,60,0.5))"
-      : "brightness(0) invert(1) opacity(0.85)";
-
   return (
-    <section className="overflow-hidden rounded-[1.25rem]" style={{ background: bg }}>
-      {/* Top */}
-      <div className="flex items-start justify-between px-5 pt-5">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-white/60">This week</p>
-          <p className="mt-0.5 text-[15px] font-semibold leading-snug text-white">
+    <section className="card p-5">
+      <div className="flex items-center gap-4">
+        <div className="shrink-0">
+          <WeatherHeroIcon icon={today?.icon ?? "sun"} size={72} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="eyebrow mb-1">This week</p>
+          <h3 className="text-[17px] font-semibold leading-snug text-[var(--home)]">
             {weather.recommendation.title}
+          </h3>
+          <p className="mt-1 text-[13px] text-muted">
+            ~{weather.avg_sun_hours}h sun/day · {today?.solar_potential} solar
           </p>
         </div>
-        <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold text-white">
-          ~{weather.avg_sun_hours}h sun/day
-        </span>
-      </div>
-
-      {/* Today hero */}
-      {today && (
-        <div className="flex items-center justify-between px-5 pt-3 pb-4">
-          <div>
-            <span className="text-[52px] font-bold leading-none text-white tabular">{today.temp_c}°</span>
-            <p className="mt-1 text-[13px] capitalize text-white/70">
-              {today.weekday} · {today.solar_potential} solar
-            </p>
-          </div>
-          <span style={{ filter: skyFilter(today.icon) }}>
-            <Sky icon={today.icon} size={56} />
-          </span>
-        </div>
-      )}
-
-      {/* Forecast strip */}
-      <div className="flex gap-0.5 border-t border-white/15 px-2 pb-3 pt-3">
-        {rest.map((d) => (
-          <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
-            <span className="text-[10px] font-medium text-white/60">{d.weekday}</span>
-            <span style={{ filter: skyFilter(d.icon) }}>
-              <Sky icon={d.icon} size={15} />
-            </span>
-            <span className="text-[12px] font-semibold tabular text-white">{d.temp_c}°</span>
-            <div className="h-1 w-full overflow-hidden rounded-full bg-white/20">
-              <div className="h-full rounded-full bg-white/70" style={{ width: `${(d.sun_hours / 11) * 100}%` }} />
-            </div>
-          </div>
-        ))}
       </div>
     </section>
   );

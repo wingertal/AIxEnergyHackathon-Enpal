@@ -75,6 +75,116 @@ export function Sky({ icon, size = 26 }: { icon: SkyIcon; size?: number }) {
   }
 }
 
+/** 3D-style weather icon for the weather card hero. */
+export function WeatherHeroIcon({ icon, size = 72 }: { icon: SkyIcon; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 72 72" fill="none" aria-hidden>
+      <defs>
+        {/* Sun */}
+        <radialGradient id="wh-sun-disc" cx="38%" cy="32%" r="62%">
+          <stop offset="0%" stopColor="#fffde7" />
+          <stop offset="45%" stopColor="#ffca28" />
+          <stop offset="100%" stopColor="#e65100" />
+        </radialGradient>
+        <radialGradient id="wh-sun-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="40%" stopColor="#ffca28" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#ffca28" stopOpacity="0" />
+        </radialGradient>
+        {/* Cloud body */}
+        <linearGradient id="wh-cloud" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#dce8f2" />
+        </linearGradient>
+        {/* Rain drop */}
+        <linearGradient id="wh-rain" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#64b5f6" />
+          <stop offset="100%" stopColor="#1565c0" />
+        </linearGradient>
+        {/* Small sun for partly */}
+        <radialGradient id="wh-sunsm" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="#fff9c4" />
+          <stop offset="55%" stopColor="#ffca28" />
+          <stop offset="100%" stopColor="#ef6c00" />
+        </radialGradient>
+        <filter id="wh-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#94a3b8" floodOpacity="0.35" />
+        </filter>
+      </defs>
+
+      {icon === "sun" && <>
+        {/* outer glow */}
+        <circle cx="36" cy="36" r="36" fill="url(#wh-sun-glow)" />
+        {/* rays — alternating long / short */}
+        {Array.from({ length: 8 }, (_, i) => {
+          const a = ((i * 45 - 90) * Math.PI) / 180;
+          const long = i % 2 === 0;
+          return (
+            <line key={i}
+              x1={36 + Math.cos(a) * 22} y1={36 + Math.sin(a) * 22}
+              x2={36 + Math.cos(a) * (long ? 34 : 30)} y2={36 + Math.sin(a) * (long ? 34 : 30)}
+              stroke="#ffca28" strokeWidth={long ? 2.5 : 2} strokeLinecap="round" opacity="0.9"
+            />
+          );
+        })}
+        {/* disc */}
+        <circle cx="36" cy="36" r="18" fill="url(#wh-sun-disc)" />
+        {/* 3D highlight */}
+        <circle cx="30" cy="29" r="6" fill="white" opacity="0.38" />
+      </>}
+
+      {icon === "partly" && <>
+        {/* small sun behind cloud */}
+        {Array.from({ length: 8 }, (_, i) => {
+          const a = ((i * 45 - 90) * Math.PI) / 180;
+          return (
+            <line key={i}
+              x1={46 + Math.cos(a) * 13} y1={24 + Math.sin(a) * 13}
+              x2={46 + Math.cos(a) * (i % 2 === 0 ? 19 : 17)} y2={24 + Math.sin(a) * (i % 2 === 0 ? 19 : 17)}
+              stroke="#ffca28" strokeWidth="1.8" strokeLinecap="round" opacity="0.85"
+            />
+          );
+        })}
+        <circle cx="46" cy="24" r="11" fill="url(#wh-sunsm)" />
+        <circle cx="41" cy="19" r="3.5" fill="white" opacity="0.35" />
+        {/* cloud in front */}
+        <g filter="url(#wh-shadow)">
+          <ellipse cx="28" cy="46" rx="12" ry="10" fill="url(#wh-cloud)" />
+          <ellipse cx="42" cy="48" rx="11" ry="9" fill="url(#wh-cloud)" />
+          <ellipse cx="34" cy="40" rx="14" ry="12" fill="url(#wh-cloud)" />
+          <rect x="16" y="46" width="37" height="12" rx="6" fill="url(#wh-cloud)" />
+        </g>
+        <path d="M22 36 Q34 27 48 35" stroke="white" strokeWidth="3" strokeLinecap="round" opacity="0.55" />
+      </>}
+
+      {icon === "cloud" && <>
+        <g filter="url(#wh-shadow)">
+          <ellipse cx="27" cy="40" rx="14" ry="12" fill="url(#wh-cloud)" />
+          <ellipse cx="44" cy="42" rx="12" ry="10" fill="url(#wh-cloud)" />
+          <ellipse cx="35" cy="33" rx="16" ry="14" fill="url(#wh-cloud)" />
+          <rect x="13" y="40" width="46" height="14" rx="7" fill="url(#wh-cloud)" />
+        </g>
+        <path d="M20 30 Q35 20 52 29" stroke="white" strokeWidth="3.5" strokeLinecap="round" opacity="0.5" />
+      </>}
+
+      {icon === "rain" && <>
+        {/* cloud */}
+        <g filter="url(#wh-shadow)">
+          <ellipse cx="27" cy="34" rx="13" ry="11" fill="url(#wh-cloud)" />
+          <ellipse cx="43" cy="36" rx="11" ry="9" fill="url(#wh-cloud)" />
+          <ellipse cx="34" cy="27" rx="14" ry="12" fill="url(#wh-cloud)" />
+          <rect x="14" y="34" width="43" height="12" rx="6" fill="url(#wh-cloud)" />
+        </g>
+        <path d="M20 24 Q34 15 50 23" stroke="white" strokeWidth="3" strokeLinecap="round" opacity="0.5" />
+        {/* rain drops */}
+        {[20, 30, 40, 50].map((x, i) => (
+          <ellipse key={i} cx={x + (i % 2) * 2} cy={57 + (i % 2) * 4} rx="2.2" ry="4.5"
+            fill="url(#wh-rain)" opacity={0.65 + i * 0.07} />
+        ))}
+      </>}
+    </svg>
+  );
+}
+
 export function UnitIcon({ unit, className }: { unit: string; className?: string }) {
   const p = { className, width: 22, height: 22, viewBox: "0 0 24 24", fill: "none" as const, stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (unit) {
