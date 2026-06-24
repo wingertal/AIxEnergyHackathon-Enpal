@@ -567,16 +567,17 @@ export function getMonthSummary(id: string, month = REFERENCE_NOW.slice(0, 7)): 
   // effective per-kWh rate the household actually pays for imported power
   const importRate = b.grid_import_kwh > 0 ? b.energy_cost_eur / b.grid_import_kwh : 0.3;
   const savedFromSolar = selfConsumed * importRate;
-  const saved = savedFromSolar + b.feed_in_credit_eur;
+  const savedFromSolarRounded = round(savedFromSolar);
+  const feedInRounded = round(b.feed_in_credit_eur);
   return {
     month: b.month,
     paid_eur: round(b.total_bill_eur),
-    saved_eur: round(saved),
-    saved_from_solar_eur: round(savedFromSolar),
-    feed_in_credit_eur: round(b.feed_in_credit_eur),
+    saved_eur: savedFromSolarRounded + feedInRounded,
+    saved_from_solar_eur: savedFromSolarRounded,
+    feed_in_credit_eur: feedInRounded,
     self_consumed_kwh: round(selfConsumed),
     self_sufficiency_pct: b.self_sufficiency_pct,
-    bill_without_solar_eur: round(b.total_bill_eur + saved),
+    bill_without_solar_eur: round(b.total_bill_eur + savedFromSolarRounded + feedInRounded),
   };
 }
 
@@ -607,20 +608,21 @@ export function getMonthToDate(id: string, timestamp = REFERENCE_NOW): MonthToDa
   const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
 
   let energy = 0;
+  let credit = 0;
   for (const r of records) {
     if (!r.timestamp.startsWith(month)) continue;
     if (r.timestamp > timestamp) break;
     energy += r.grid_import_kw * STEP_HOURS * r.price_eur_per_kwh;
+    credit += r.grid_export_kw * STEP_HOURS * tariff.feed_in_eur_per_kwh;
   }
   const baseSoFar = (tariff.base_fee_eur_per_month * day) / daysInMonth;
-  // Gross cost: what was actually paid to the grid + standing charge.
-  // Feed-in credits are shown in the savings section, not the bill section.
-  const soFar = energy + baseSoFar;
+  const soFar = energy - credit + baseSoFar;
+  // simple linear projection to month end
   const likely = day > 0 ? (soFar / day) * daysInMonth : soFar;
   return {
     month,
-    so_far_eur: round(soFar),
-    likely_total_eur: round(likely),
+    so_far_eur: round(Math.max(0, soFar)),
+    likely_total_eur: round(Math.max(0, likely)),
     days_elapsed: day,
     days_in_month: daysInMonth,
   };
