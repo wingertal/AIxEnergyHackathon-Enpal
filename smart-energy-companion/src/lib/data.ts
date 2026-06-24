@@ -607,21 +607,20 @@ export function getMonthToDate(id: string, timestamp = REFERENCE_NOW): MonthToDa
   const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
 
   let energy = 0;
-  let credit = 0;
   for (const r of records) {
     if (!r.timestamp.startsWith(month)) continue;
     if (r.timestamp > timestamp) break;
     energy += r.grid_import_kw * STEP_HOURS * r.price_eur_per_kwh;
-    credit += r.grid_export_kw * STEP_HOURS * tariff.feed_in_eur_per_kwh;
   }
   const baseSoFar = (tariff.base_fee_eur_per_month * day) / daysInMonth;
-  const soFar = energy - credit + baseSoFar;
-  // simple linear projection to month end
+  // Gross cost: what was actually paid to the grid + standing charge.
+  // Feed-in credits are shown in the savings section, not the bill section.
+  const soFar = energy + baseSoFar;
   const likely = day > 0 ? (soFar / day) * daysInMonth : soFar;
   return {
     month,
-    so_far_eur: round(Math.max(0, soFar)),
-    likely_total_eur: round(Math.max(0, likely)),
+    so_far_eur: round(soFar),
+    likely_total_eur: round(likely),
     days_elapsed: day,
     days_in_month: daysInMonth,
   };
