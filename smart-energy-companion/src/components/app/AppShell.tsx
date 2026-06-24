@@ -182,7 +182,7 @@ function Home({ data, go }: { data: AppData; go: (s: Screen) => void }) {
       <ForYou recs={data.recommendations} />
 
       <section className="space-y-3">
-        <p className="eyebrow">Saved in {data.monthLabel}</p>
+        <p className="eyebrow">Savings</p>
         <SavingsHero
           month={data.month}
           mtd={data.monthToDate}
@@ -394,6 +394,7 @@ function SavingsHero({
   mtd,
   comparison,
   batteryRec,
+  label,
   onClick,
 }: {
   month: MonthSummary;
@@ -405,40 +406,48 @@ function SavingsHero({
 }) {
   const { verdict, delta_eur } = comparison;
   const deltaAmt = eur(Math.abs(delta_eur), 0);
-  const trendText =
+  const badgeText =
     verdict === "better"
-      ? `↓ ${deltaAmt} cheaper than last month`
+      ? `↓ ${deltaAmt} less`
       : verdict === "worse"
-      ? `↑ ${deltaAmt} more than last month`
-      : "→ Same as last month";
+      ? `↑ ${deltaAmt} more`
+      : null;
+  const badgeStyle =
+    verdict === "better"
+      ? { background: "var(--battery-soft)", color: "var(--battery)" }
+      : verdict === "worse"
+      ? { background: "#fee2e2", color: "#b91c1c" }
+      : null;
 
   return (
     <button onClick={onClick} className="card card-interactive w-full p-5 text-left">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="t-heading text-[var(--home)]">in {label}</span>
+        {badgeText && badgeStyle && (
+          <span className="rounded-full px-2.5 py-1 t-label font-semibold" style={badgeStyle}>
+            {badgeText}
+          </span>
+        )}
+      </div>
+
       <div className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</div>
       <p className="mt-1.5 t-caption">
-        {eur(month.saved_from_solar_eur, 0)} from your own solar
+        {eur(month.saved_from_solar_eur, 0)} from using your own solar
         {month.feed_in_credit_eur > 0 && (
-          <> · {eur(month.feed_in_credit_eur, 0)} feed-in credit</>
+          <> + {eur(month.feed_in_credit_eur, 0)} from selling surplus back</>
         )}.
       </p>
 
       <div className="mt-4 grid grid-cols-2 border-t pt-4">
         <div className="pr-4">
-          <p className="eyebrow mb-0.5">Bill so far</p>
+          <p className="eyebrow mb-0.5">Spent so far</p>
           <p className="t-metric text-[var(--home)]">{eur(mtd.so_far_eur, 0)}</p>
         </div>
         <div className="border-l pl-4">
-          <p className="eyebrow mb-0.5">Likely total</p>
+          <p className="eyebrow mb-0.5">Projected total</p>
           <p className="t-metric text-[var(--home)]">~{eur(mtd.likely_total_eur, 0)}</p>
         </div>
       </div>
-
-      <p
-        className="mt-3 t-label"
-        style={{ color: verdict === "better" ? "var(--battery)" : verdict === "worse" ? "var(--danger)" : "var(--muted)" }}
-      >
-        {trendText}
-      </p>
 
       {batteryRec && (
         <div className="mt-3 rounded-xl bg-[var(--background)] px-3 py-2.5">
