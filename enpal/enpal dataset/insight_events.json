@@ -82,15 +82,6 @@
   },
   {
     "household_id": "HH-1004",
-    "type": "anomaly",
-    "severity": "high",
-    "period": "2025-06-15..2025-06-25",
-    "title": "Power consumption spiking — AC overload",
-    "detail": "Multiple portable AC units running simultaneously have pushed consumption 4× above your usual level. With no battery storage, the shortfall is coming entirely from the grid at peak-price hours.",
-    "suggested_action": "Stagger AC start times, set thermostats to 24°C, and avoid running other large appliances (washing machine, dishwasher) during afternoon peak hours."
-  },
-  {
-    "household_id": "HH-1004",
     "type": "nudge",
     "severity": "info",
     "period": "recurring",
@@ -106,6 +97,15 @@
     "title": "Highest bill in December",
     "detail": "December was your most expensive month — no solar production and high base consumption. July was your cheapest month with surplus solar feeding back to the grid.",
     "suggested_action": "Pre-heat during cheap/sunny hours; review winter heating schedule."
+  },
+  {
+    "household_id": "HH-1005",
+    "type": "anomaly",
+    "severity": "high",
+    "period": "2025-06-15..2025-06-25",
+    "title": "AC units pushing consumption into the red",
+    "detail": "Sustained high consumption over the past week — air conditioning is running at full load during afternoon peak hours. Your solar (6.4 kWp) can't cover it, so the gap is coming from the grid at the most expensive time of day.",
+    "suggested_action": "Set AC to 24°C instead of 20°C, pre-cool the home before 11:00 when solar is peaking, and stagger appliances away from 14:00–19:00."
   },
   {
     "household_id": "HH-1005",

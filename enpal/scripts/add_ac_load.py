@@ -21,12 +21,12 @@ DATASET_DIR = Path(__file__).parent.parent / "enpal dataset"
 
 # Max AC power per household (kW). 0 = no AC added.
 AC_MAX = {
-    "HH-1001": 0.0,  # Becker — leave as-is
-    "HH-1002": 0.0,  # Schmidt — leave as-is
-    "HH-1003": 0.0,  # Yilmaz — leave as-is
-    "HH-1004": 6.0,  # Sonnenallee WG — many portable ACs, no battery
-    "HH-1005": 2.0,  # Wagner — modest AC
-    "HH-1006": 3.5,  # Hoffmann Frankfurt — multi-room, gets hot
+    "HH-1001": 0.0,  # Becker — original household, leave unchanged
+    "HH-1002": 0.0,  # Schmidt — original household, leave unchanged
+    "HH-1003": 0.0,  # Yilmaz — original household, leave unchanged
+    "HH-1004": 0.0,  # Sonnenallee — original household, leave unchanged (yellow status)
+    "HH-1005": 8.0,  # Wagner — heavy AC spike; small solar (2.2 kW) can't cover it → grid-heavy → red
+    "HH-1006": 3.5,  # Hoffmann Frankfurt — moderate multi-room AC
 }
 
 
