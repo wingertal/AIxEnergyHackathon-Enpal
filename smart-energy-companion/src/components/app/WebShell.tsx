@@ -69,7 +69,6 @@ export function WebShell({ data }: { data: AppData }) {
               mtd={data.monthToDate}
               comparison={data.billComparison}
               label={data.monthLabel}
-              dataDate={data.dataDate}
             />
             <EquipmentPanel units={data.equipment} />
             <RecommendationsPanel recs={data.recommendations} />
@@ -77,7 +76,7 @@ export function WebShell({ data }: { data: AppData }) {
 
           {/* side column ------------------------------------------------ */}
           <div className="space-y-6">
-            <LivePanel live={data.live} household={data.household} />
+            <EnergyFlowCard live={data.live} household={data.household} />
             <TrendPanel trend={data.trend} currentMonth={data.month.month} />
             <WeatherPanel weather={data.weather} />
             <AskCard
@@ -162,11 +161,10 @@ function StatusPanel({
 }) {
   const c = HEALTH_COLORS[health.level];
   const onOwnPower = (status.mix.sources.find((s) => s.key === "grid")?.pct ?? 0) < 15;
-  const flatRate = windows.length > 0 && windows.every((w) => w.price === windows[0].price);
   return (
     <section>
       <p className="eyebrow mb-3">Energy status</p>
-      <div className="card p-6">
+      <div className="card card-arc-border p-6" style={{ '--arc-c': c.color } as React.CSSProperties}>
         {/* Header row — matches mobile LightStrip */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -344,13 +342,11 @@ function SavingsPanel({
   mtd,
   comparison,
   label,
-  dataDate,
 }: {
   month: MonthSummary;
   mtd: MonthToDate;
   comparison: BillComparison;
   label: string;
-  dataDate: string;
 }) {
   return (
     <section>
@@ -414,61 +410,172 @@ function TrendPill({ comparison }: { comparison: BillComparison }) {
 
 /* ---------------------------------------------------------------- live now */
 
-function LivePanel({
+function NodeIcon({
+  cx, cy, r, device,
+}: { cx: number; cy: number; r: number; device: string }) {
+  const color = DEVICE_COLORS[device]?.color ?? "var(--muted)";
+  const iconSize = Math.min(20, r * 0.82);
+  const half = iconSize / 2;
+  const scale = iconSize / 24;
+  const sw = (2 / scale).toFixed(2);
+  const base = { fill: "none", stroke: color, strokeWidth: sw, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  return (
+    <g transform={`translate(${cx - half},${cy - half}) scale(${scale})`} {...base}>
+      {device === "solar" && <>
+        <rect x="3" y="13" width="18" height="8" rx="1" />
+        <path d="M5 13l1-4h12l1 4M9 9v4M15 9v4M3 17h18" />
+        <path d="M12 3v3M7 5l1 1.5M17 5l-1 1.5" />
+      </>}
+      {device === "battery" && <>
+        <rect x="3" y="7" width="16" height="10" rx="2" />
+        <path d="M21 11v2" />
+        <path d="M12 9l-1.5 2.5H13L11.5 15" />
+      </>}
+      {device === "grid" && <path d="M9 3 7 9h4l-2 6M15 3l-2 6h4l-2 6M5 21l4-9M19 21l-4-9M9 12h6" />}
+      {device === "household" && <>
+        <path d="M3 11l9-8 9 8" />
+        <path d="M5 10v10h14V10" />
+        <path d="M10 20v-6h4v6" />
+      </>}
+      {device === "heatpump" && <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M12 8.5v7M8.5 12h7" />
+      </>}
+      {device === "ev" && <>
+        <path d="M5 17h11M5 17a2 2 0 0 1-2-2v-3l2-4h9l2 4v5a2 2 0 0 1-2 0" />
+        <circle cx="7.5" cy="17.5" r="1.5" />
+        <circle cx="14.5" cy="17.5" r="1.5" />
+        <path d="M19 11l2 1v3a1.5 1.5 0 0 1-3 0v-2" />
+      </>}
+    </g>
+  );
+}
+
+function EnergyFlowCard({
   live,
   household,
 }: {
   live: Snapshot;
   household: AppData["household"];
 }) {
-  const rows: { label: string; value: string; show: boolean }[] = [
-    { label: "Solar", value: `${live.pv_production_kw.toFixed(1)} kW`, show: household.pv_kwp > 0 },
-    {
-      label: "Battery",
-      value: `${Math.round(live.battery_soc_pct)}%`,
-      show: household.battery_kwh > 0,
-    },
-    {
-      label: "Heat pump",
-      value: `${live.heatpump_kw.toFixed(1)} kW`,
-      show: household.heat_pump,
-    },
-    {
-      label: "Car",
-      value: live.ev_charging_kw > 0.1 ? `${live.ev_charging_kw.toFixed(1)} kW` : "idle",
-      show: household.ev_charger,
-    },
-    { label: "Home load", value: `${live.total_consumption_kw.toFixed(1)} kW`, show: true },
-    {
-      label: live.grid_export_kw > 0.05 ? "Grid export" : "Grid import",
-      value: `${(live.grid_export_kw > 0.05 ? live.grid_export_kw : live.grid_import_kw).toFixed(1)} kW`,
-      show: true,
-    },
-  ];
+  const PV = live.pv_production_kw;
+  const batCharge = live.battery_charge_kw;
+  const batDischarge = live.battery_discharge_kw;
+  const batPct = Math.round(live.battery_soc_pct);
+  const gridIn = live.grid_import_kw;
+  const gridOut = live.grid_export_kw;
+  const hp = live.heatpump_kw;
+  const ev = live.ev_charging_kw;
+  const home = live.house_load_kw;
+  const on = (v: number) => v > 0.05;
+
+  // Layout: solar top-center, battery left, grid right, house center, hp/ev bottom
+  const SX = 150, SY = 30;
+  const BX = 42,  BY = 118;
+  const HX = 150, HY = 118;
+  const GX = 258, GY = 118;
+  const HPX = 90, HPY = 198;
+  const EVX = 210, EVY = 198;
+  const NR = 24, NRS = 18;
+
+  const spd = (kw: number) => `${Math.max(0.5, 2.2 - kw * 0.35)}s`;
+  const lw  = (kw: number) => `${Math.min(3.5, 1.2 + kw * 0.35)}`;
+  const da  = "4 6";
+
+  // ─ connection helper
+  const FlowLine = ({ x1, y1, x2, y2, active, kw, color }: {
+    x1: number; y1: number; x2: number; y2: number;
+    active: boolean; kw?: number; color: string;
+  }) => active && kw ? (
+    <line {...{x1,y1,x2,y2}} stroke={color} strokeWidth={lw(kw)} strokeDasharray={da} opacity="0.9"
+      style={{ animation: `flowDash ${spd(kw)} linear infinite` }} />
+  ) : (
+    <line {...{x1,y1,x2,y2}} stroke="var(--border)" strokeWidth="1" opacity="0.5" />
+  );
+
   return (
-    <section className="card p-5">
-      <div className="flex items-center gap-2">
-        <span
-          className="live-dot inline-block h-2 w-2 rounded-full"
-          style={{ background: "var(--battery)" }}
-        />
-        <h3 className="text-[18px] font-semibold text-[var(--home)]">Right now</h3>
-        <span className="ml-auto text-[12.5px] text-muted tabular">
-          {live.outdoor_temp_c.toFixed(0)}° outside
-        </span>
+    <section className="card overflow-hidden p-0">
+      <div className="flex items-center justify-between px-5 pt-5">
+        <div className="flex items-center gap-2">
+          <span className="live-dot inline-block h-2 w-2 rounded-full" style={{ background: "var(--battery)" }} />
+          <h3 className="text-[18px] font-semibold text-[var(--home)]">Right now</h3>
+        </div>
+        <span className="text-[12.5px] text-muted tabular">{live.outdoor_temp_c.toFixed(0)}° outside</span>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5">
-        {rows
-          .filter((r) => r.show)
-          .map((r) => (
-            <div key={r.label} className="flex items-baseline justify-between">
-              <span className="text-[12.5px] text-muted">{r.label}</span>
-              <span className="text-[18px] font-semibold text-[var(--home)] tabular">
-                {r.value}
-              </span>
-            </div>
-          ))}
-      </div>
+
+      <svg viewBox="0 0 300 248" width="100%" aria-hidden style={{ display: "block", padding: "0 4px" }}>
+        {/* ── connection lines ── */}
+        {household.pv_kwp > 0 && (
+          <FlowLine x1={SX} y1={SY+NR} x2={HX} y2={HY-NR}
+            active={on(PV)} kw={PV} color="var(--solar)" />
+        )}
+        {household.battery_kwh > 0 && (on(batDischarge)
+          ? <FlowLine x1={BX+NR} y1={BY} x2={HX-NR} y2={HY} active kw={batDischarge} color="var(--battery)" />
+          : on(batCharge)
+          ? <FlowLine x1={HX-NR} y1={HY} x2={BX+NR} y2={BY} active kw={batCharge} color="var(--solar)" />
+          : <FlowLine x1={BX+NR} y1={BY} x2={HX-NR} y2={HY} active={false} color="var(--border)" />
+        )}
+        {on(gridIn)
+          ? <FlowLine x1={GX-NR} y1={GY} x2={HX+NR} y2={HY} active kw={gridIn} color="var(--grid)" />
+          : on(gridOut)
+          ? <FlowLine x1={HX+NR} y1={HY} x2={GX-NR} y2={GY} active kw={gridOut} color="var(--solar)" />
+          : <FlowLine x1={GX-NR} y1={GY} x2={HX+NR} y2={HY} active={false} color="var(--border)" />
+        }
+        {household.heat_pump && (
+          <FlowLine x1={HX-18} y1={HY+NR} x2={HPX+NRS-3} y2={HPY-NRS}
+            active={on(hp)} kw={hp} color="var(--heatpump)" />
+        )}
+        {household.ev_charger && (
+          <FlowLine x1={HX+18} y1={HY+NR} x2={EVX-NRS+3} y2={EVY-NRS}
+            active={on(ev)} kw={ev} color="var(--ev)" />
+        )}
+
+        {/* ── nodes ── */}
+        {/* Solar */}
+        {household.pv_kwp > 0 && <>
+          <circle cx={SX} cy={SY} r={NR} fill="var(--solar-soft)" />
+          <NodeIcon cx={SX} cy={SY} r={NR} device="solar" />
+          <text x={SX} y={SY+NR+13} textAnchor="middle" fontSize="9" fill="var(--muted)" fontWeight="600" letterSpacing="0.06">SOLAR</text>
+          <text x={SX} y={SY+NR+25} textAnchor="middle" fontSize="12" fill="var(--home)" fontWeight="600">{PV.toFixed(1)} kW</text>
+        </>}
+        {/* Battery */}
+        {household.battery_kwh > 0 && <>
+          <circle cx={BX} cy={BY} r={NR} fill="var(--battery-soft)" />
+          <NodeIcon cx={BX} cy={BY} r={NR} device="battery" />
+          <text x={BX} y={BY+NR+13} textAnchor="middle" fontSize="9" fill="var(--muted)" fontWeight="600" letterSpacing="0.06">BAT</text>
+          <text x={BX} y={BY+NR+25} textAnchor="middle" fontSize="12" fill="var(--home)" fontWeight="600">{batPct}%</text>
+        </>}
+        {/* Grid */}
+        <>
+          <circle cx={GX} cy={GY} r={NR} fill="var(--grid-soft)" />
+          <NodeIcon cx={GX} cy={GY} r={NR} device="grid" />
+          <text x={GX} y={GY+NR+13} textAnchor="middle" fontSize="9" fill="var(--muted)" fontWeight="600" letterSpacing="0.06">GRID</text>
+          <text x={GX} y={GY+NR+25} textAnchor="middle" fontSize="12" fill="var(--home)" fontWeight="600">
+            {on(gridOut) ? `↑${gridOut.toFixed(1)} kW` : on(gridIn) ? `↓${gridIn.toFixed(1)} kW` : "idle"}
+          </text>
+        </>
+        {/* House (centre, slightly larger) */}
+        <>
+          <circle cx={HX} cy={HY} r={NR+4} fill="var(--sky)" stroke="var(--border)" strokeWidth="1.5" />
+          <NodeIcon cx={HX} cy={HY} r={NR+4} device="household" />
+          <text x={HX} y={HY+NR+18} textAnchor="middle" fontSize="12" fill="var(--home)" fontWeight="600">{home.toFixed(1)} kW</text>
+        </>
+        {/* Heat pump */}
+        {household.heat_pump && <>
+          <circle cx={HPX} cy={HPY} r={NRS} fill="#ede9fe" />
+          <NodeIcon cx={HPX} cy={HPY} r={NRS} device="heatpump" />
+          <text x={HPX} y={HPY+NRS+12} textAnchor="middle" fontSize="9" fill="var(--muted)" fontWeight="600">HEAT</text>
+          <text x={HPX} y={HPY+NRS+23} textAnchor="middle" fontSize="11" fill="var(--home)" fontWeight="600">{hp.toFixed(1)} kW</text>
+        </>}
+        {/* EV */}
+        {household.ev_charger && <>
+          <circle cx={EVX} cy={EVY} r={NRS} fill="#fff0e6" />
+          <NodeIcon cx={EVX} cy={EVY} r={NRS} device="ev" />
+          <text x={EVX} y={EVY+NRS+12} textAnchor="middle" fontSize="9" fill="var(--muted)" fontWeight="600">CAR</text>
+          <text x={EVX} y={EVY+NRS+23} textAnchor="middle" fontSize="11" fill="var(--home)" fontWeight="600">{ev > 0.1 ? `${ev.toFixed(1)} kW` : "idle"}</text>
+        </>}
+      </svg>
     </section>
   );
 }
@@ -545,38 +652,64 @@ function Legend({ color, label }: { color: string; label: string }) {
 
 /* ----------------------------------------------------------------- weather */
 
+const SKY_BG: Record<string, string> = {
+  sun:    "linear-gradient(155deg, #1260b8 0%, #2e8de8 55%, #62b8ff 100%)",
+  partly: "linear-gradient(155deg, #1a6ec4 0%, #5090c8 60%, #90c4e8 100%)",
+  cloud:  "linear-gradient(155deg, #4c5f6e 0%, #6e8494 60%, #a0b4be 100%)",
+  rain:   "linear-gradient(155deg, #243240 0%, #3a5060 60%, #5a7884 100%)",
+};
+
 function WeatherPanel({ weather }: { weather: WeatherOutlook }) {
+  const today = weather.days[0];
+  const rest = weather.days.slice(1);
+  const bg = today ? (SKY_BG[today.icon] ?? SKY_BG.cloud) : SKY_BG.cloud;
+  const skyFilter = (icon: string) =>
+    icon === "sun"
+      ? "drop-shadow(0 0 6px rgba(255,210,60,0.5))"
+      : "brightness(0) invert(1) opacity(0.85)";
+
   return (
-    <section className="card p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="text-[18px] font-semibold text-[var(--home)]">This week</h3>
-        <span className="text-[12.5px] text-muted tabular">
+    <section className="overflow-hidden rounded-[1.25rem]" style={{ background: bg }}>
+      {/* Top */}
+      <div className="flex items-start justify-between px-5 pt-5">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-white/60">This week</p>
+          <p className="mt-0.5 text-[15px] font-semibold leading-snug text-white">
+            {weather.recommendation.title}
+          </p>
+        </div>
+        <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold text-white">
           ~{weather.avg_sun_hours}h sun/day
         </span>
       </div>
-      <p className="mt-1.5 text-[15px] font-medium leading-snug text-[var(--home)]">
-        {weather.recommendation.title}
-      </p>
-      <div className="mt-3 space-y-1.5">
-        {weather.days.map((d) => (
-          <div key={d.date} className="flex items-center gap-2.5">
-            <span className="w-8 text-[12.5px] text-muted">{d.weekday}</span>
-            <Sky icon={d.icon} size={18} />
-            <span className="w-8 text-[12.5px] text-[var(--home)] tabular">
-              {d.temp_c}°
+
+      {/* Today hero */}
+      {today && (
+        <div className="flex items-center justify-between px-5 pt-3 pb-4">
+          <div>
+            <span className="text-[52px] font-bold leading-none text-white tabular">{today.temp_c}°</span>
+            <p className="mt-1 text-[13px] capitalize text-white/70">
+              {today.weekday} · {today.solar_potential} solar
+            </p>
+          </div>
+          <span style={{ filter: skyFilter(today.icon) }}>
+            <Sky icon={today.icon} size={56} />
+          </span>
+        </div>
+      )}
+
+      {/* Forecast strip */}
+      <div className="flex gap-0.5 border-t border-white/15 px-2 pb-3 pt-3">
+        {rest.map((d) => (
+          <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+            <span className="text-[10px] font-medium text-white/60">{d.weekday}</span>
+            <span style={{ filter: skyFilter(d.icon) }}>
+              <Sky icon={d.icon} size={15} />
             </span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--background)]">
-              <div
-                className="h-full rounded-full"
-                style={{
-                  width: `${(d.sun_hours / 11) * 100}%`,
-                  background: "var(--solar)",
-                }}
-              />
+            <span className="text-[12px] font-semibold tabular text-white">{d.temp_c}°</span>
+            <div className="h-1 w-full overflow-hidden rounded-full bg-white/20">
+              <div className="h-full rounded-full bg-white/70" style={{ width: `${(d.sun_hours / 11) * 100}%` }} />
             </div>
-            <span className="w-12 text-right text-[10.5px] text-muted tabular">
-              {d.sun_hours}h
-            </span>
           </div>
         ))}
       </div>
