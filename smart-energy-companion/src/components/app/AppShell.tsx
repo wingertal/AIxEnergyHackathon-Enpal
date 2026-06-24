@@ -521,30 +521,6 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
       <div className="mt-0.5 t-caption line-clamp-2">
         {unit.status}
       </div>
-      {unit.impact && unit.today_eur !== undefined && (
-        <div className="mt-auto border-t pt-2">
-          <div className="grid grid-cols-2 gap-1">
-            <div>
-              <p className="t-label text-muted">{unit.impact === "saving" ? "Saved today" : "Cost today"}</p>
-              <p
-                className="t-heading"
-                style={{ color: "var(--home)" }}
-              >
-                {unit.impact === "saving" ? "+" : ""}{eur(unit.today_eur)}
-              </p>
-            </div>
-            <div>
-              <p className="t-label text-muted">This month</p>
-              <p
-                className="t-heading"
-                style={{ color: "var(--home)" }}
-              >
-                {unit.impact === "saving" ? "+" : ""}{eur(unit.month_eur ?? 0, 0)}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </button>
   );
 }

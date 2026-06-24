@@ -381,32 +381,6 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
         </div>
       </div>
       <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--foreground)]">{unit.why}</p>
-      {unit.impact && unit.today_eur !== undefined && (
-        <div className="mt-auto flex gap-8 border-t pt-3">
-          <div>
-            <div className="text-[10.5px] text-muted">
-              {unit.impact === "saving" ? "Saved today" : "Cost today"}
-            </div>
-            <div
-              className="text-[15px] font-semibold tabular"
-              style={{ color: "var(--home)" }}
-            >
-              {unit.impact === "saving" ? "+" : ""}
-              {eur(unit.today_eur)}
-            </div>
-          </div>
-          <div>
-            <div className="text-[10.5px] text-muted">This month</div>
-            <div
-              className="text-[15px] font-semibold tabular"
-              style={{ color: "var(--home)" }}
-            >
-              {unit.impact === "saving" ? "+" : ""}
-              {eur(unit.month_eur ?? 0, 0)}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
