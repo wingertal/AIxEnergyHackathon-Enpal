@@ -139,9 +139,6 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
           ))}
         </select>
       </div>
-      <h1 className="mt-4 t-metric font-semibold tracking-tight text-[var(--home)]">
-        {data.greeting}, {data.household.name.replace("Familie ", "").replace("WG ", "")}.
-      </h1>
     </header>
   );
 }
@@ -376,18 +373,20 @@ function LightStrip({
           <p className="t-metric text-[var(--home)]">{health.self_sufficiency_pct}%</p>
         </div>
         <div className="border-l pl-4">
-          <p className="eyebrow mb-1">Power now</p>
+          <p className="eyebrow mb-1">Using now</p>
+          <p className="t-metric text-[var(--home)]">
+            {status.house_load_kw.toFixed(1)} kW
+          </p>
           <p
-            className="t-metric"
-            style={{ color: onOwnPower ? "var(--battery)" : "var(--home)" }}
+            className="mt-0.5 t-label"
+            style={{ color: onOwnPower ? "var(--battery)" : "var(--muted)" }}
           >
-            {onOwnPower ? "Free" : `${status.price_cents}c`}
+            {onOwnPower ? "Free (own power)" : `${status.price_cents}c / kWh`}
           </p>
         </div>
       </div>
 
-      {/* Cheapest hours (dynamic tariff only) */}
-      {!mix.sources.every?.((s) => s.key === "solar") && mix.sources.length > 0 && (
+      {mix.sources.length > 0 && (
         <div className="mt-3">
           <div className="flex h-1.5 overflow-hidden rounded-full bg-[var(--background)]">
             {mix.sources.map((s) => (

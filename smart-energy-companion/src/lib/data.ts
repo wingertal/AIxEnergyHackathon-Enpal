@@ -393,6 +393,7 @@ export interface TrafficStatus {
   best_price: number;
   solar_surplus: boolean;
   mix: PowerMix; // where the home's electricity is coming from now
+  house_load_kw: number; // current total home consumption
 }
 
 export function getTrafficStatus(id: string, timestamp = REFERENCE_NOW): TrafficStatus {
@@ -450,6 +451,7 @@ export function getTrafficStatus(id: string, timestamp = REFERENCE_NOW): Traffic
     best_price: best?.price ?? p,
     solar_surplus: surplus,
     mix,
+    house_load_kw: snap.house_load_kw,
   };
 }
 
