@@ -316,7 +316,7 @@ function CarouselArrow({
 function RecCard({ rec }: { rec: Recommendation }) {
   const t = REC_TONE[rec.tone];
   return (
-    <div className="card flex h-full flex-col border-l-4 p-4" style={{ borderLeftColor: t.color }}>
+    <div className="card flex h-full flex-col p-4">
       <div className="flex items-start justify-between gap-2">
         <h4 className="t-heading leading-snug text-[var(--navy)]">{rec.title}</h4>
         {rec.saving && (
@@ -549,7 +549,6 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
 
 /* ⑤ this week, one icon + the recommendation (full forecast lives in detail) */
 function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () => void }) {
-  const c = LIGHT_COLORS[weather.recommendation.light];
   const icon: "sun" | "partly" | "rain" =
     weather.recommendation.light === "green"
       ? "sun"
@@ -559,8 +558,7 @@ function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () 
   return (
     <button
       onClick={onClick}
-      className="card card-interactive w-full border-l-4 p-4 text-left"
-      style={{ borderLeftColor: c.color }}
+      className="card card-interactive w-full p-4 text-left"
     >
       <div className="flex items-center gap-4">
         <Sky icon={icon} size={40} />
@@ -735,7 +733,7 @@ function SavingsDetail({ data }: { data: AppData }) {
       </div>
 
       {batteryRec && (
-        <div className="card border-l-4 p-5" style={{ borderLeftColor: "var(--solar)" }}>
+        <div className="card p-5">
           <div className="flex items-center gap-2">
             <span>💡</span>
             <h3 className="t-heading text-[var(--home)]">Money on the table</h3>
@@ -791,7 +789,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
       {units.map((u) => {
         const c = CONDITION_COLORS[u.condition];
         return (
-          <div key={u.key} className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
+          <div key={u.key} className="card p-5">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2" style={{ color: c.color }}>
                 <UnitIcon unit={u.key} />
@@ -836,10 +834,9 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
 
 function WeatherDetail({ data }: { data: AppData }) {
   const { weather } = data;
-  const c = LIGHT_COLORS[weather.recommendation.light];
   return (
     <div className="space-y-4">
-      <div className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
+      <div className="card p-5">
         <h2 className="t-title text-[var(--home)]">{weather.recommendation.title}</h2>
         <p className="mt-2 t-body text-[var(--foreground)]">{weather.recommendation.detail}</p>
       </div>

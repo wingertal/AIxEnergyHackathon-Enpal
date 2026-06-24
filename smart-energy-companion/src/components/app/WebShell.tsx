@@ -296,8 +296,7 @@ function RecCard({ rec }: { rec: Recommendation }) {
   const t = REC_TONE[rec.tone];
   return (
     <div
-      className="card flex h-full flex-col border-l-4 p-4"
-      style={{ borderLeftColor: t.color }}
+      className="card flex h-full flex-col p-4"
     >
       <div className="flex items-start gap-3">
         <span
@@ -647,9 +646,8 @@ function Legend({ color, label }: { color: string; label: string }) {
 /* ----------------------------------------------------------------- weather */
 
 function WeatherPanel({ weather }: { weather: WeatherOutlook }) {
-  const c = LIGHT_COLORS[weather.recommendation.light];
   return (
-    <section className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
+    <section className="card p-5">
       <div className="flex items-center justify-between">
         <h3 className="text-[18px] font-semibold text-[var(--home)]">This week</h3>
         <span className="text-[12.5px] text-muted tabular">
