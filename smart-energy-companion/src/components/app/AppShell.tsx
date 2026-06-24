@@ -124,14 +124,14 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
           <span className="text-[18px] font-bold tracking-tight text-[var(--navy)]">
             Enpal<span className="text-[var(--gold)]">.</span>
           </span>
-          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--navy)]">
+          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--navy)]">
             Coach
           </span>
         </div>
         <select
           value={data.household.id}
           onChange={(e) => onSwitch(e.target.value)}
-          className="rounded-full border bg-white px-3 py-1.5 text-[12px] font-medium text-[var(--home)] outline-none"
+          className="rounded-full border bg-white px-3 py-1.5 text-[12.5px] font-medium text-[var(--home)] outline-none"
           aria-label="Switch household"
         >
           {data.households.map((h) => (
@@ -141,7 +141,7 @@ function HomeHeader({ data, onSwitch }: { data: AppData; onSwitch: (id: string) 
           ))}
         </select>
       </div>
-      <h1 className="mt-4 text-[22px] font-semibold tracking-tight text-[var(--home)]">
+      <h1 className="mt-4 text-[25.92px] font-semibold tracking-tight text-[var(--home)]">
         {data.greeting}, {data.household.name.replace("Familie ", "").replace("WG ", "")}.
       </h1>
     </header>
@@ -158,7 +158,7 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
       >
         <Back />
       </button>
-      <h1 className="text-[17px] font-semibold text-[var(--home)]">{title}</h1>
+      <h1 className="text-[18px] font-semibold text-[var(--home)]">{title}</h1>
     </header>
   );
 }
@@ -197,7 +197,7 @@ function Home({ data, go }: { data: AppData; go: (s: Screen) => void }) {
 
       <button
         onClick={() => go({ name: "ask" })}
-        className="w-full rounded-2xl bg-[var(--home)] py-3.5 text-[14px] font-medium text-white transition active:opacity-90"
+        className="w-full rounded-2xl bg-[var(--home)] py-3.5 text-[15px] font-medium text-white transition active:opacity-90"
       >
         Ask a question
       </button>
@@ -240,10 +240,10 @@ function ForYou({ recs }: { recs: Recommendation[] }) {
   return (
     <section>
       <div className="mb-2.5 flex items-center gap-2">
-        <h3 className="text-[15px] font-semibold text-[var(--navy)]">
+        <h3 className="text-[18px] font-semibold text-[var(--navy)]">
           Your energy coach
         </h3>
-        <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--navy)]">
+        <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--navy)]">
           {recs.length} tips
         </span>
         <div className="ml-auto flex gap-1.5">
@@ -318,17 +318,17 @@ function RecCard({ rec }: { rec: Recommendation }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h4 className="text-[14px] font-semibold leading-snug text-[var(--navy)]">{rec.title}</h4>
+            <h4 className="text-[18px] font-semibold leading-snug text-[var(--navy)]">{rec.title}</h4>
             {rec.saving && (
               <span
-                className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold tabular"
+                className="shrink-0 rounded-full px-2 py-0.5 text-[12.5px] font-semibold tabular"
                 style={{ background: t.soft, color: t.color }}
               >
                 {rec.saving}
               </span>
             )}
           </div>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-muted">{rec.detail}</p>
+          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{rec.detail}</p>
         </div>
       </div>
     </div>
@@ -372,31 +372,28 @@ function LightStrip({
               className="live-dot inline-block h-2 w-2 rounded-full"
               style={{ background: c.color }}
             />
-            <span className="text-[14px] font-semibold text-[var(--home)]">
+            <span className="text-[18px] font-semibold text-[var(--home)]">
               {health.title}
             </span>
             <span
-              className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold"
               style={{ background: c.soft, color: c.color }}
             >
               {health.badge}
             </span>
           </div>
-          <p className="mt-1 text-[12px] leading-relaxed text-muted">{health.reason}</p>
+          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{health.reason}</p>
         </div>
       </div>
 
       {mix.sources.length > 0 && (
         <div className="mt-3">
-          <div className="mb-1 text-[10.5px] font-medium uppercase tracking-wide text-muted">
-            Powered by
-          </div>
           <div className="flex h-2 overflow-hidden rounded-full bg-[var(--background)]">
             {mix.sources.map((s) => (
               <div key={s.key} style={{ width: `${s.pct}%`, background: SOURCE_COLOR[s.key] }} />
             ))}
           </div>
-          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted">
+          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[12.5px] text-muted">
             {mix.sources.map((s) => (
               <span key={s.key} className="inline-flex items-center gap-1 tabular">
                 <span className="inline-block h-2 w-2 rounded-full" style={{ background: SOURCE_COLOR[s.key] }} />
@@ -407,7 +404,7 @@ function LightStrip({
         </div>
       )}
 
-      <div className="mt-2.5 flex items-center justify-between border-t pt-2.5 text-[11px] text-muted tabular">
+      <div className="mt-2.5 flex items-center justify-between border-t pt-2.5 text-[12.5px] text-muted tabular">
         <span>
           Using {health.consumption_kw} kW · {health.self_sufficiency_pct}% self-supplied
         </span>
@@ -445,7 +442,7 @@ function SavingsHero({
           >
             <PiggyBank />
           </span>
-          <span className="text-[13px] font-medium text-muted">Saved in {label}</span>
+          <span className="text-[12.5px] font-medium text-muted">Saved in {label}</span>
         </div>
         <TrendPill comparison={comparison} />
       </div>
@@ -453,7 +450,7 @@ function SavingsHero({
       <div className="mt-3 text-[46px] font-semibold leading-none tabular text-[var(--battery)]">
         {eur(month.saved_eur, 0)}
       </div>
-      <p className="mt-2 text-[12px] leading-snug text-muted">
+      <p className="mt-2 text-[15px] font-medium leading-snug text-[var(--foreground)]">
         {eur(month.saved_from_solar_eur, 0)} from using your own solar
         {month.feed_in_credit_eur > 0 && (
           <> + {eur(month.feed_in_credit_eur, 0)} from selling surplus back</>
@@ -463,14 +460,14 @@ function SavingsHero({
 
       <div className="mt-5 grid grid-cols-2 gap-3 border-t pt-4">
         <div>
-          <div className="text-[11px] text-muted">Spent so far</div>
-          <div className="text-[17px] font-semibold text-[var(--home)] tabular">
+          <div className="text-[12.5px] text-muted">Spent so far</div>
+          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
             {eur(mtd.so_far_eur, 0)}
           </div>
         </div>
         <div>
-          <div className="text-[11px] text-muted">Projected total</div>
-          <div className="text-[17px] font-semibold text-[var(--home)] tabular">
+          <div className="text-[12.5px] text-muted">Projected total</div>
+          <div className="text-[18px] font-semibold text-[var(--home)] tabular">
             ~{eur(mtd.likely_total_eur, 0)}
           </div>
         </div>
@@ -482,7 +479,7 @@ function SavingsHero({
           style={{ background: "var(--battery-soft)" }}
         >
           <span className="text-[15px] leading-none">💡</span>
-          <span className="text-[12.5px] leading-snug text-[var(--home)]">
+          <span className="text-[15px] leading-snug text-[var(--home)]">
             Save about{" "}
             <span className="font-semibold text-[var(--battery)]">€{batteryRec.annual_eur}/yr</span>{" "}
             more with a home battery, store your spare solar instead of selling it cheaply.
@@ -505,7 +502,7 @@ function TrendPill({ comparison }: { comparison: BillComparison }) {
       : { bg: "var(--background)", fg: "var(--muted)", icon: "→", text: "same as last mo." };
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold tabular"
+      className="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[12.5px] font-semibold tabular"
       style={{ background: cfg.bg, color: cfg.fg }}
     >
       <span>{cfg.icon}</span>
@@ -525,7 +522,7 @@ function EquipmentSection({
   return (
     <section>
       <div className="mb-2.5 flex items-end justify-between">
-        <h3 className="text-[15px] font-semibold text-[var(--home)]">Your equipment</h3>
+        <h3 className="text-[18px] font-semibold text-[var(--home)]">Your equipment</h3>
         <ConditionLegend />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -582,10 +579,10 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
           aria-hidden
         />
       </div>
-      <div className="mt-2.5 text-[13px] font-semibold text-[var(--home)]">
+      <div className="mt-2.5 text-[18px] font-semibold text-[var(--home)]">
         {unit.name}
       </div>
-      <div className="mt-0.5 text-[11.5px] leading-snug text-muted line-clamp-2">
+      <div className="mt-0.5 text-[12.5px] leading-snug text-muted line-clamp-2">
         {unit.status}
       </div>
       {unit.impact && unit.today_eur !== undefined && (
@@ -634,16 +631,16 @@ function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () 
       style={{ borderLeftColor: c.color }}
     >
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[11px] font-medium uppercase tracking-wide text-muted">This week</span>
+        <span className="text-[12.5px] font-medium uppercase tracking-wide text-muted">This week</span>
         <Chevron />
       </div>
       <div className="flex items-center gap-4">
         <Sky icon={icon} size={44} />
         <div className="min-w-0 flex-1">
-          <h3 className="text-[15px] font-semibold leading-snug text-[var(--home)]">
+          <h3 className="text-[18px] font-semibold leading-snug text-[var(--home)]">
             {weather.recommendation.title}
           </h3>
-          <div className="mt-1 text-[12px] text-muted tabular">
+          <div className="mt-1 text-[12.5px] text-muted tabular">
             about {weather.avg_sun_hours}h of sun a day
           </div>
         </div>
@@ -658,13 +655,13 @@ function LastWeek({ days }: { days: DailySaving[] }) {
   const best = days.reduce((a, b) => (b.saved_eur > a.saved_eur ? b : a), days[0]);
   return (
     <div className="card w-full p-5">
-      <h3 className="text-[15px] font-semibold text-[var(--home)]">Last 7 days</h3>
+      <h3 className="text-[18px] font-semibold text-[var(--home)]">Last 7 days</h3>
       <div className="mt-3 space-y-2">
         {days.map((d) => {
           const isBest = d.date === best.date;
           return (
             <div key={d.date} className="flex items-center gap-2.5">
-              <span className="w-8 text-[12px] text-muted">{d.weekday}</span>
+              <span className="w-8 text-[12.5px] text-muted">{d.weekday}</span>
               <div className="h-3 flex-1 overflow-hidden rounded-full bg-[var(--background)]">
                 <div
                   className="h-full rounded-full"
@@ -674,14 +671,14 @@ function LastWeek({ days }: { days: DailySaving[] }) {
                   }}
                 />
               </div>
-              <span className="w-12 text-right text-[12px] font-medium text-[var(--home)] tabular">
+              <span className="w-12 text-right text-[12.5px] font-medium text-[var(--home)] tabular">
                 {eur(d.saved_eur)}
               </span>
             </div>
           );
         })}
       </div>
-      <p className="mt-3 text-[12.5px] text-muted">
+      <p className="mt-3 text-[15px] text-muted">
         {best.weekday} was your best day, you saved {eur(best.saved_eur)}.
       </p>
     </div>
@@ -702,9 +699,9 @@ function ChargeDetail({ data }: { data: AppData }) {
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-white" style={{ background: c.color }}>
           <Bolt className="h-7 w-7" />
         </span>
-        <h2 className="mt-4 text-[19px] font-semibold text-[var(--home)]">{status.title}</h2>
-        <p className="mt-2 text-[14px] leading-relaxed text-muted">{status.reason}</p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 text-[13px]">
+        <h2 className="mt-4 text-[21.6px] font-semibold text-[var(--home)]">{status.title}</h2>
+        <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{status.reason}</p>
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--background)] px-3 py-1.5 text-[12.5px]">
           <span className="text-muted">Right now</span>
           {onOwnPower ? (
             <span className="font-semibold text-[var(--battery)]">free · your own solar</span>
@@ -717,17 +714,17 @@ function ChargeDetail({ data }: { data: AppData }) {
       <div className="card p-5">
         {flatRate ? (
           <>
-            <h3 className="text-[15px] font-semibold text-[var(--home)]">
+            <h3 className="text-[18px] font-semibold text-[var(--home)]">
               Your grid price today
             </h3>
             <div className="mt-3 rounded-xl bg-[var(--background)] px-4 py-4 text-center">
               <div className="text-[24px] font-semibold text-[var(--home)] tabular">
                 {(windows[0].price * 100).toFixed(1)}c
-                <span className="text-[13px] font-normal text-muted">/kWh</span>
+                <span className="text-[12.5px] font-normal text-muted">/kWh</span>
               </div>
-              <div className="mt-1 text-[12px] text-muted">same price all day</div>
+              <div className="mt-1 text-[12.5px] text-muted">same price all day</div>
             </div>
-            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+            <p className="mt-3 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
               You&apos;re on a fixed price, so grid power costs the same at every hour. Run
               appliances whenever suits you, and use your own solar first since it&apos;s
               cheaper than the grid.
@@ -735,7 +732,7 @@ function ChargeDetail({ data }: { data: AppData }) {
           </>
         ) : (
           <>
-            <h3 className="text-[15px] font-semibold text-[var(--home)]">
+            <h3 className="text-[18px] font-semibold text-[var(--home)]">
               Cheapest times to use power today
             </h3>
             <div className="mt-3 flex gap-2">
@@ -745,12 +742,12 @@ function ChargeDetail({ data }: { data: AppData }) {
                   className="flex-1 rounded-xl px-3 py-2.5 text-center"
                   style={{ background: w.rank === 1 ? c.soft : "var(--background)" }}
                 >
-                  <div className="text-[15px] font-semibold text-[var(--home)] tabular">{w.time}</div>
-                  <div className="text-[11px] text-muted tabular">{(w.price * 100).toFixed(1)}c</div>
+                  <div className="text-[18px] font-semibold text-[var(--home)] tabular">{w.time}</div>
+                  <div className="text-[12.5px] text-muted tabular">{(w.price * 100).toFixed(1)}c</div>
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+            <p className="mt-3 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
               {onOwnPower
                 ? "Your solar is covering the home for free right now. When you do need the grid, in the evening or for the car, these are today's cheapest hours."
                 : "Run the dishwasher, laundry or EV charging in these windows to pay the least."}
@@ -769,29 +766,29 @@ function SavingsDetail({ data }: { data: AppData }) {
   return (
     <div className="space-y-4">
       <div className="card p-6">
-        <span className="text-[12px] font-medium text-muted">In {monthLabel}</span>
+        <span className="text-[12.5px] font-medium text-muted">In {monthLabel}</span>
         <div className="mt-3 flex items-end justify-between">
           <div>
-            <div className="text-[12px] text-muted">You saved</div>
+            <div className="text-[12.5px] text-muted">You saved</div>
             <div className="text-[30px] font-semibold leading-none tabular text-[var(--battery)]">
               {eur(month.saved_eur, 0)}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[12px] text-muted">You paid</div>
+            <div className="text-[12.5px] text-muted">You paid</div>
             <div className="text-[22px] font-semibold leading-none tabular text-[var(--home)]">
               {eur(month.paid_eur, 0)}
             </div>
           </div>
         </div>
-        <p className="mt-4 text-[13px] leading-relaxed text-muted">
+        <p className="mt-4 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
           Without your solar, this month would have cost about{" "}
           <span className="font-semibold text-[var(--home)]">{eur(month.bill_without_solar_eur, 0)}</span>. You
           used {month.self_consumed_kwh.toFixed(0)} kWh of your own power and earned{" "}
           {eur(month.feed_in_credit_eur)} feeding surplus back.
         </p>
         {tariffSaving > 0 && (
-          <p className="mt-2 text-[13px] leading-relaxed text-muted">
+          <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
             Your tariff is also a good fit, about{" "}
             <span className="font-semibold text-[var(--home)]">{eur(tariffSaving, 0)}/yr</span> cheaper than a
             standard plan.
@@ -803,9 +800,9 @@ function SavingsDetail({ data }: { data: AppData }) {
         <div className="card border-l-4 p-5" style={{ borderLeftColor: "var(--solar)" }}>
           <div className="flex items-center gap-2">
             <span>💡</span>
-            <h3 className="text-[15px] font-semibold text-[var(--home)]">Money on the table</h3>
+            <h3 className="text-[18px] font-semibold text-[var(--home)]">Money on the table</h3>
           </div>
-          <p className="mt-2 text-[13px] leading-relaxed text-muted">
+          <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
             You sent <span className="font-semibold text-[var(--home)]">{batteryRec.exported_kwh.toFixed(0)} kWh</span> of
             spare solar to the grid this year for a small feed-in payment. A home battery (~{batteryRec.suggested_kwh} kWh)
             would store it for the evening instead, saving roughly{" "}
@@ -815,7 +812,7 @@ function SavingsDetail({ data }: { data: AppData }) {
       )}
 
       <div className="card p-5">
-        <h3 className="text-[15px] font-semibold text-[var(--home)]">Last months</h3>
+        <h3 className="text-[18px] font-semibold text-[var(--home)]">Last months</h3>
         <div className="mt-4 flex items-end justify-between gap-2" style={{ height: 120 }}>
           {trend.map((m) => {
             const isNow = m.month === month.month;
@@ -828,14 +825,14 @@ function SavingsDetail({ data }: { data: AppData }) {
                     style={{ height: `${(m.paid_eur / maxVal) * 100}%`, background: isNow ? "var(--home)" : "var(--border)" }}
                   />
                 </div>
-                <span className={`text-[10px] ${isNow ? "font-semibold text-[var(--home)]" : "text-muted"}`}>
+                <span className={`text-[10.5px] ${isNow ? "font-semibold text-[var(--home)]" : "text-muted"}`}>
                   {m.month.slice(5)}
                 </span>
               </div>
             );
           })}
         </div>
-        <div className="mt-3 flex gap-4 text-[11px] text-muted">
+        <div className="mt-3 flex gap-4 text-[12.5px] text-muted">
           <Legend color="var(--battery)" label="saved" />
           <Legend color="var(--home)" label="paid" />
         </div>
@@ -860,24 +857,24 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2" style={{ color: c.color }}>
                 <UnitIcon unit={u.key} />
-                <span className="text-[15px] font-semibold text-[var(--home)]">{u.name}</span>
+                <span className="text-[18px] font-semibold text-[var(--home)]">{u.name}</span>
               </span>
               <span
-                className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+                className="rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold"
                 style={{ background: c.soft, color: c.color }}
               >
                 {u.status}
               </span>
             </div>
-            <p className="mt-2 text-[13px] leading-relaxed text-muted">{u.why}</p>
+            <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{u.why}</p>
             {u.impact && u.today_eur !== undefined && (
               <div className="mt-3 flex gap-6 border-t pt-3">
                 <div>
-                  <div className="text-[11px] text-muted">
+                  <div className="text-[12.5px] text-muted">
                     {u.impact === "saving" ? "Saved today" : "Cost today"}
                   </div>
                   <div
-                    className="text-[16px] font-semibold tabular"
+                    className="text-[18px] font-semibold tabular"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}
@@ -885,9 +882,9 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                   </div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-muted">This month</div>
+                  <div className="text-[12.5px] text-muted">This month</div>
                   <div
-                    className="text-[16px] font-semibold tabular"
+                    className="text-[18px] font-semibold tabular"
                     style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}
@@ -909,26 +906,26 @@ function WeatherDetail({ data }: { data: AppData }) {
   return (
     <div className="space-y-4">
       <div className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
-        <h2 className="text-[16px] font-semibold text-[var(--home)]">{weather.recommendation.title}</h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted">{weather.recommendation.detail}</p>
+        <h2 className="text-[18px] font-semibold text-[var(--home)]">{weather.recommendation.title}</h2>
+        <p className="mt-2 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{weather.recommendation.detail}</p>
       </div>
 
       <div className="card p-3">
         {weather.days.map((d, i) => (
           <div key={d.date} className={`flex items-center gap-3 px-2 py-2.5 ${i > 0 ? "border-t" : ""}`}>
-            <span className="w-9 text-[13px] font-medium text-[var(--home)]">{d.weekday}</span>
+            <span className="w-9 text-[12.5px] font-medium text-[var(--home)]">{d.weekday}</span>
             <Sky icon={d.icon} size={22} />
-            <span className="w-10 text-[13px] tabular text-[var(--home)]">{d.temp_c}°</span>
+            <span className="w-10 text-[12.5px] tabular text-[var(--home)]">{d.temp_c}°</span>
             <div className="flex-1">
               <div className="h-1.5 overflow-hidden rounded-full bg-[var(--background)]">
                 <div className="h-full rounded-full" style={{ width: `${(d.sun_hours / 11) * 100}%`, background: "var(--solar)" }} />
               </div>
             </div>
-            <span className="w-12 text-right text-[11px] text-muted tabular">{d.sun_hours}h sun</span>
+            <span className="w-12 text-right text-[12.5px] text-muted tabular">{d.sun_hours}h sun</span>
           </div>
         ))}
       </div>
-      <p className="px-1 text-[11px] text-muted">
+      <p className="px-1 text-[12.5px] text-muted">
         Forecast for {weather.city}. Solar potential shown as daily sun hours.
       </p>
     </div>

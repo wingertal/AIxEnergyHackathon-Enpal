@@ -115,12 +115,12 @@ function TopBar({
           <span className="text-[20px] font-bold tracking-tight text-[var(--navy)]">
             Enpal<span className="text-[var(--gold)]">.</span>
           </span>
-          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--navy)]">
+          <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--navy)]">
             Coach
           </span>
         </div>
 
-        <div className="ml-2 hidden text-[13px] text-muted lg:block">
+        <div className="ml-2 hidden text-[15px] text-muted lg:block">
           {data.greeting}, {shortName(data.household.name)} ·{" "}
           <span className="text-[var(--home)]">{data.household.city}</span>
         </div>
@@ -129,7 +129,7 @@ function TopBar({
           <select
             value={data.household.id}
             onChange={(e) => onSwitch(e.target.value)}
-            className="rounded-full border bg-white px-3.5 py-2 text-[13px] font-medium text-[var(--home)] outline-none"
+            className="rounded-full border bg-white px-3.5 py-2 text-[12.5px] font-medium text-[var(--home)] outline-none"
             aria-label="Switch household"
           >
             {data.households.map((h) => (
@@ -140,7 +140,7 @@ function TopBar({
           </select>
           <button
             onClick={onAsk}
-            className="rounded-full bg-[var(--home)] px-4 py-2 text-[13px] font-medium text-white transition hover:opacity-90"
+            className="rounded-full bg-[var(--home)] px-4 py-2 text-[15px] font-medium text-white transition hover:opacity-90"
           >
             <span className="lg:hidden">Ask</span>
             <span className="hidden lg:inline">Ask your companion</span>
@@ -186,16 +186,16 @@ function StatusPanel({
               {health.title}
             </h2>
             <span
-              className="ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+              className="ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold"
               style={{ background: c.soft, color: c.color }}
             >
               {health.badge}
             </span>
           </div>
-          <p className="mt-1.5 max-w-[60ch] text-[13.5px] leading-relaxed text-muted">
+          <p className="mt-1.5 max-w-[60ch] text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
             {health.reason}
           </p>
-          <p className="mt-2 text-[12px] text-muted tabular">
+          <p className="mt-2 text-[15px] text-muted tabular">
             Using {health.consumption_kw} kW · {health.self_sufficiency_pct}% self-supplied · grid {health.price_cents}c/kWh
           </p>
         </div>
@@ -203,7 +203,6 @@ function StatusPanel({
 
       {mix.sources.length > 0 && (
         <div className="mt-5">
-          <div className="mb-1.5 eyebrow">Powered by</div>
           <div className="flex h-2.5 overflow-hidden rounded-full bg-[var(--background)]">
             {mix.sources.map((s) => (
               <div
@@ -212,7 +211,7 @@ function StatusPanel({
               />
             ))}
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted">
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted">
             {mix.sources.map((s) => (
               <span key={s.key} className="inline-flex items-center gap-1.5 tabular">
                 <span
@@ -229,13 +228,13 @@ function StatusPanel({
       <div className="mt-5 border-t pt-4">
         {flatRate ? (
           <>
-            <h3 className="text-[13px] font-semibold text-[var(--home)]">Your grid price today</h3>
+            <h3 className="text-[18px] font-semibold text-[var(--home)]">Your grid price today</h3>
             <div className="mt-3 flex items-center gap-3 rounded-xl bg-[var(--background)] px-4 py-3">
               <div className="text-[20px] font-semibold text-[var(--home)] tabular">
                 {(windows[0].price * 100).toFixed(1)}c
-                <span className="text-[12px] font-normal text-muted">/kWh</span>
+                <span className="text-[15px] font-normal text-muted">/kWh</span>
               </div>
-              <span className="text-[12.5px] text-muted">
+              <span className="text-[15px] text-muted">
                 Fixed price, the same every hour. Run appliances whenever suits you, and use
                 your own solar first since it&apos;s cheaper than the grid.
               </span>
@@ -243,7 +242,7 @@ function StatusPanel({
           </>
         ) : (
           <>
-            <h3 className="text-[13px] font-semibold text-[var(--home)]">
+            <h3 className="text-[15px] font-semibold text-[var(--home)]">
               Cheapest times to use power today
             </h3>
             <div className="mt-3 flex gap-3">
@@ -253,10 +252,10 @@ function StatusPanel({
                   className="flex-1 rounded-xl px-3 py-3 text-center"
                   style={{ background: w.rank === 1 ? c.soft : "var(--background)" }}
                 >
-                  <div className="text-[16px] font-semibold text-[var(--home)] tabular">
+                  <div className="text-[18px] font-semibold text-[var(--home)] tabular">
                     {w.time}
                   </div>
-                  <div className="text-[11px] text-muted tabular">
+                  <div className="text-[12.5px] text-muted tabular">
                     {(w.price * 100).toFixed(1)}c
                   </div>
                 </div>
@@ -276,10 +275,10 @@ function RecommendationsPanel({ recs }: { recs: Recommendation[] }) {
   return (
     <section>
       <div className="mb-3 flex items-center gap-2">
-        <h3 className="text-[16px] font-semibold text-[var(--navy)]">
+        <h3 className="text-[18px] font-semibold text-[var(--navy)]">
           Your energy coach
         </h3>
-        <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--navy)]">
+        <span className="rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-[12.5px] font-semibold text-[var(--navy)]">
           {recs.length} tips
         </span>
       </div>
@@ -308,19 +307,19 @@ function RecCard({ rec }: { rec: Recommendation }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h4 className="text-[14px] font-semibold leading-snug text-[var(--navy)]">
+            <h4 className="text-[15px] font-semibold leading-snug text-[var(--navy)]">
               {rec.title}
             </h4>
             {rec.saving && (
               <span
-                className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold tabular"
+                className="shrink-0 rounded-full px-2 py-0.5 text-[12.5px] font-semibold tabular"
                 style={{ background: t.soft, color: t.color }}
               >
                 {rec.saving}
               </span>
             )}
           </div>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
+          <p className="mt-1 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">
             {rec.detail}
           </p>
         </div>
@@ -335,7 +334,7 @@ function EquipmentPanel({ units }: { units: EquipmentUnit[] }) {
   return (
     <section>
       <div className="mb-3 flex items-end justify-between">
-        <h3 className="text-[16px] font-semibold text-[var(--home)]">
+        <h3 className="text-[18px] font-semibold text-[var(--home)]">
           Your equipment
         </h3>
         <ConditionLegend />
@@ -362,7 +361,7 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="text-[14px] font-semibold text-[var(--home)]">
+            <h4 className="text-[18px] font-semibold text-[var(--home)]">
               {unit.name}
             </h4>
             <span
@@ -372,14 +371,14 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
             />
           </div>
           <p
-            className="mt-0.5 text-[12px] font-medium"
+            className="mt-0.5 text-[12.5px] font-medium"
             style={{ color: c.color }}
           >
             {unit.status}
           </p>
         </div>
       </div>
-      <p className="mt-2.5 text-[12.5px] leading-relaxed text-muted">{unit.why}</p>
+      <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-[var(--foreground)]">{unit.why}</p>
       {unit.impact && unit.today_eur !== undefined && (
         <div className="mt-auto flex gap-8 border-t pt-3">
           <div>
@@ -417,7 +416,7 @@ function ConditionLegend() {
     { c: "grey", label: "idle" },
   ];
   return (
-    <div className="flex items-center gap-3 text-[11px] text-muted">
+    <div className="flex items-center gap-3 text-[12.5px] text-muted">
       {items.map((i) => (
         <span key={i.c} className="inline-flex items-center gap-1">
           <span
@@ -463,9 +462,9 @@ function SavingsPanel({
         <span className="text-[48px] font-semibold leading-none tabular text-[var(--battery)]">
           {eur(month.saved_eur, 0)}
         </span>
-        <span className="mb-1.5 text-[13px] text-muted">saved in {label}</span>
+        <span className="mb-1.5 text-[12.5px] text-muted">saved in {label}</span>
       </div>
-      <p className="mt-2 text-[12.5px] leading-snug text-muted">
+      <p className="mt-2 text-[15px] font-medium leading-snug text-[var(--foreground)]">
         Mostly by using your own solar ({eur(month.saved_from_solar_eur, 0)}) instead of
         buying it
         {month.feed_in_credit_eur > 0 && (
@@ -476,13 +475,13 @@ function SavingsPanel({
 
       <div className="mt-5 grid grid-cols-2 gap-4 border-t pt-4">
         <div>
-          <div className="text-[11px] text-muted">Spent so far this month</div>
+          <div className="text-[12.5px] text-muted">Spent so far this month</div>
           <div className="text-[18px] font-semibold text-[var(--home)] tabular">
             {eur(mtd.so_far_eur, 0)}
           </div>
         </div>
         <div>
-          <div className="text-[11px] text-muted">Projected month total</div>
+          <div className="text-[12.5px] text-muted">Projected month total</div>
           <div className="text-[18px] font-semibold text-[var(--home)] tabular">
             ~{eur(mtd.likely_total_eur, 0)}
           </div>
@@ -504,7 +503,7 @@ function TrendPill({ comparison }: { comparison: BillComparison }) {
       : { bg: "var(--background)", fg: "var(--muted)", icon: "→", text: "same as last month" };
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold tabular"
+      className="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[12.5px] font-semibold tabular"
       style={{ background: cfg.bg, color: cfg.fg }}
     >
       <span>{cfg.icon}</span>
@@ -553,8 +552,8 @@ function LivePanel({
           className="live-dot inline-block h-2 w-2 rounded-full"
           style={{ background: "var(--battery)" }}
         />
-        <h3 className="text-[14px] font-semibold text-[var(--home)]">Right now</h3>
-        <span className="ml-auto text-[11px] text-muted tabular">
+        <h3 className="text-[18px] font-semibold text-[var(--home)]">Right now</h3>
+        <span className="ml-auto text-[12.5px] text-muted tabular">
           {live.outdoor_temp_c.toFixed(0)}° outside
         </span>
       </div>
@@ -563,8 +562,8 @@ function LivePanel({
           .filter((r) => r.show)
           .map((r) => (
             <div key={r.label} className="flex items-baseline justify-between">
-              <span className="text-[12px] text-muted">{r.label}</span>
-              <span className="text-[13px] font-semibold text-[var(--home)] tabular">
+              <span className="text-[12.5px] text-muted">{r.label}</span>
+              <span className="text-[12.5px] font-semibold text-[var(--home)] tabular">
                 {r.value}
               </span>
             </div>
@@ -586,7 +585,7 @@ function TrendPanel({
   const maxVal = Math.max(...trend.flatMap((m) => [m.saved_eur, m.paid_eur]), 1);
   return (
     <section className="card p-5">
-      <h3 className="text-[14px] font-semibold text-[var(--home)]">Saved vs paid</h3>
+      <h3 className="text-[18px] font-semibold text-[var(--home)]">Saved vs paid</h3>
       <div
         className="mt-4 flex items-end justify-between gap-2"
         style={{ height: 120 }}
@@ -614,7 +613,7 @@ function TrendPanel({
                 />
               </div>
               <span
-                className={`text-[10px] ${
+                className={`text-[10.5px] ${
                   isNow ? "font-semibold text-[var(--home)]" : "text-muted"
                 }`}
               >
@@ -624,7 +623,7 @@ function TrendPanel({
           );
         })}
       </div>
-      <div className="mt-3 flex gap-4 text-[11px] text-muted">
+      <div className="mt-3 flex gap-4 text-[12.5px] text-muted">
         <Legend color="var(--battery)" label="saved" />
         <Legend color="var(--home)" label="paid" />
       </div>
@@ -651,20 +650,20 @@ function WeatherPanel({ weather }: { weather: WeatherOutlook }) {
   return (
     <section className="card border-l-4 p-5" style={{ borderLeftColor: c.color }}>
       <div className="flex items-center justify-between">
-        <h3 className="text-[14px] font-semibold text-[var(--home)]">This week</h3>
-        <span className="text-[11px] text-muted tabular">
+        <h3 className="text-[18px] font-semibold text-[var(--home)]">This week</h3>
+        <span className="text-[12.5px] text-muted tabular">
           ~{weather.avg_sun_hours}h sun/day
         </span>
       </div>
-      <p className="mt-1.5 text-[13px] font-medium leading-snug text-[var(--home)]">
+      <p className="mt-1.5 text-[15px] font-medium leading-snug text-[var(--home)]">
         {weather.recommendation.title}
       </p>
       <div className="mt-3 space-y-1.5">
         {weather.days.map((d) => (
           <div key={d.date} className="flex items-center gap-2.5">
-            <span className="w-8 text-[12px] text-muted">{d.weekday}</span>
+            <span className="w-8 text-[12.5px] text-muted">{d.weekday}</span>
             <Sky icon={d.icon} size={18} />
-            <span className="w-8 text-[12px] text-[var(--home)] tabular">
+            <span className="w-8 text-[12.5px] text-[var(--home)] tabular">
               {d.temp_c}°
             </span>
             <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--background)]">
@@ -676,7 +675,7 @@ function WeatherPanel({ weather }: { weather: WeatherOutlook }) {
                 }}
               />
             </div>
-            <span className="w-12 text-right text-[10px] text-muted tabular">
+            <span className="w-12 text-right text-[10.5px] text-muted tabular">
               {d.sun_hours}h
             </span>
           </div>
@@ -697,10 +696,10 @@ function AskCard({
 }) {
   return (
     <section className="card p-5">
-      <h3 className="text-[14px] font-semibold text-[var(--home)]">
+      <h3 className="text-[18px] font-semibold text-[var(--home)]">
         Ask your companion
       </h3>
-      <p className="mt-1 text-[12px] text-muted">
+      <p className="mt-1 text-[15px] text-muted">
         Answers grounded in your real energy data.
       </p>
       <div className="mt-3 space-y-2">
@@ -717,7 +716,7 @@ function AskCard({
       </div>
       <button
         onClick={onAsk}
-        className="mt-3 w-full rounded-xl bg-[var(--home)] py-2.5 text-[13px] font-medium text-white transition hover:opacity-90"
+        className="mt-3 w-full rounded-xl bg-[var(--home)] py-2.5 text-[15px] font-medium text-white transition hover:opacity-90"
       >
         Ask your own question
       </button>
@@ -743,7 +742,7 @@ function AskDrawer({
       />
       <div className="relative flex h-screen w-full max-w-[460px] flex-col bg-[var(--background)] px-5 pb-5 pt-5 shadow-2xl">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-[16px] font-semibold text-[var(--home)]">
+          <h2 className="flex items-center gap-2 text-[18px] font-semibold text-[var(--home)]">
             <Send /> Ask your companion
           </h2>
           <button
