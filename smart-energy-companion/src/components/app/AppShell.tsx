@@ -528,7 +528,7 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
               <p className="t-label text-muted">{unit.impact === "saving" ? "Saved today" : "Cost today"}</p>
               <p
                 className="t-heading"
-                style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+                style={{ color: "var(--home)" }}
               >
                 {unit.impact === "saving" ? "+" : ""}{eur(unit.today_eur)}
               </p>
@@ -537,7 +537,7 @@ function EquipmentCard({ unit, onClick }: { unit: EquipmentUnit; onClick: () => 
               <p className="t-label text-muted">This month</p>
               <p
                 className="t-heading"
-                style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+                style={{ color: "var(--home)" }}
               >
                 {unit.impact === "saving" ? "+" : ""}{eur(unit.month_eur ?? 0, 0)}
               </p>
@@ -812,7 +812,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                   <p className="t-label text-muted">{u.impact === "saving" ? "Saved today" : "Cost today"}</p>
                   <p
                     className="t-metric tabular mt-0.5"
-                    style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+                    style={{ color: "var(--home)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}{eur(u.today_eur)}
                   </p>
@@ -821,7 +821,7 @@ function EquipmentDetail({ data, focus }: { data: AppData; focus?: string }) {
                   <p className="t-label text-muted">This month</p>
                   <p
                     className="t-metric tabular mt-0.5"
-                    style={{ color: u.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+                    style={{ color: "var(--home)" }}
                   >
                     {u.impact === "saving" ? "+" : ""}{eur(u.month_eur ?? 0, 0)}
                   </p>

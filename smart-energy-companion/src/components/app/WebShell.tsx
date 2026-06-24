@@ -389,7 +389,7 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
             </div>
             <div
               className="text-[15px] font-semibold tabular"
-              style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+              style={{ color: "var(--home)" }}
             >
               {unit.impact === "saving" ? "+" : ""}
               {eur(unit.today_eur)}
@@ -399,7 +399,7 @@ function EquipmentCard({ unit }: { unit: EquipmentUnit }) {
             <div className="text-[10.5px] text-muted">This month</div>
             <div
               className="text-[15px] font-semibold tabular"
-              style={{ color: unit.impact === "saving" ? "var(--battery)" : "var(--ev)" }}
+              style={{ color: "var(--home)" }}
             >
               {unit.impact === "saving" ? "+" : ""}
               {eur(unit.month_eur ?? 0, 0)}
