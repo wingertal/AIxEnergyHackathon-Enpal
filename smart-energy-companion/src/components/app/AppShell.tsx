@@ -329,13 +329,7 @@ function RecCard({ rec }: { rec: Recommendation }) {
   );
 }
 
-/* ① status strip, overall electricity: signal + where power is coming from */
-const SOURCE_COLOR: Record<string, string> = {
-  solar: "var(--solar)",
-  battery: "var(--battery)",
-  grid: "var(--grid)",
-};
-
+/* ① status strip */
 function gridShare(status: TrafficStatus): number {
   return status.mix.sources.find((s) => s.key === "grid")?.pct ?? 0;
 }
@@ -350,7 +344,6 @@ function LightStrip({
   onClick: () => void;
 }) {
   const c = HEALTH_COLORS[health.level];
-  const mix = status.mix;
   const onOwnPower = gridShare(status) < 15;
   return (
     <button onClick={onClick} className="card card-interactive w-full p-4 text-left">
@@ -366,43 +359,26 @@ function LightStrip({
         <Chevron />
       </div>
 
-      {/* Key metrics grid */}
-      <div className="mt-4 grid grid-cols-2 border-t pt-4">
-        <div className="pr-4">
-          <p className="eyebrow mb-1">Self-powered today</p>
+      {/* Three-part metrics */}
+      <div className="mt-4 grid grid-cols-3 divide-x border-t pt-4">
+        <div className="pr-3">
+          <p className="eyebrow mb-1">Self-powered</p>
           <p className="t-metric text-[var(--home)]">{health.self_sufficiency_pct}%</p>
         </div>
-        <div className="border-l pl-4">
+        <div className="px-3">
           <p className="eyebrow mb-1">Using now</p>
-          <p className="t-metric text-[var(--home)]">
-            {status.house_load_kw.toFixed(1)} kW
-          </p>
+          <p className="t-metric text-[var(--home)]">{status.house_load_kw.toFixed(1)} kW</p>
+        </div>
+        <div className="pl-3">
+          <p className="eyebrow mb-1">Power cost</p>
           <p
-            className="mt-0.5 t-label"
-            style={{ color: onOwnPower ? "var(--battery)" : "var(--muted)" }}
+            className="t-metric"
+            style={{ color: onOwnPower ? "var(--battery)" : "var(--home)" }}
           >
-            {onOwnPower ? "Free (own power)" : `${status.price_cents}c / kWh`}
+            {onOwnPower ? "Free" : `${status.price_cents}c`}
           </p>
         </div>
       </div>
-
-      {mix.sources.length > 0 && (
-        <div className="mt-3">
-          <div className="flex h-1.5 overflow-hidden rounded-full bg-[var(--background)]">
-            {mix.sources.map((s) => (
-              <div key={s.key} style={{ width: `${s.pct}%`, background: SOURCE_COLOR[s.key] }} />
-            ))}
-          </div>
-          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
-            {mix.sources.map((s) => (
-              <span key={s.key} className="t-label inline-flex items-center gap-1 text-muted tabular">
-                <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: SOURCE_COLOR[s.key] }} />
-                {s.pct}% {s.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </button>
   );
 }
