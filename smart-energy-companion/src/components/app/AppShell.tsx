@@ -25,8 +25,6 @@ import {
   Chevron,
   Sky,
   UnitIcon,
-  RecGlyph,
-  HealthGlyph,
 
   REC_TONE,
   LIGHT_COLORS,
@@ -167,26 +165,47 @@ function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) 
 
 function Home({ data, go }: { data: AppData; go: (s: Screen) => void }) {
   return (
-    <div className="space-y-5">
-      <LightStrip
-        health={data.health}
-        status={data.status}
-        onClick={() => go({ name: "charge" })}
-      />
+    <div className="space-y-6">
+      {/* ─ swap eyebrow ↔ t-title below to toggle label style across all sections ─ */}
+      <section className="space-y-3">
+        <p className="eyebrow">Energy status</p>
+        {/* big-title version: <h2 className="t-title text-[var(--home)]">Energy status</h2> */}
+        <LightStrip
+          health={data.health}
+          status={data.status}
+          onClick={() => go({ name: "charge" })}
+        />
+      </section>
+
       <ForYou recs={data.recommendations} />
-      <SavingsHero
-        month={data.month}
-        mtd={data.monthToDate}
-        comparison={data.billComparison}
-        batteryRec={data.batteryRec}
-        label={data.monthLabel}
-        onClick={() => go({ name: "savings" })}
-      />
-      <EquipmentSection
-        units={data.equipment}
-        onOpen={(unit) => go({ name: "equipment", unit })}
-      />
-      <WeekAhead weather={data.weather} onClick={() => go({ name: "weather" })} />
+
+      <section className="space-y-3">
+        <p className="eyebrow">Saved in {data.monthLabel}</p>
+        <SavingsHero
+          month={data.month}
+          mtd={data.monthToDate}
+          comparison={data.billComparison}
+          batteryRec={data.batteryRec}
+          label={data.monthLabel}
+          onClick={() => go({ name: "savings" })}
+        />
+      </section>
+
+      <section>
+        <div className="mb-3 flex items-end justify-between">
+          <p className="eyebrow">Your equipment</p>
+          <ConditionLegend />
+        </div>
+        <EquipmentSection
+          units={data.equipment}
+          onOpen={(unit) => go({ name: "equipment", unit })}
+        />
+      </section>
+
+      <section className="space-y-3">
+        <p className="eyebrow">This week</p>
+        <WeekAhead weather={data.weather} onClick={() => go({ name: "weather" })} />
+      </section>
 
       <button
         onClick={() => go({ name: "ask" })}
@@ -232,9 +251,9 @@ function ForYou({ recs }: { recs: Recommendation[] }) {
 
   return (
     <section>
-      <div className="mb-3 flex items-center gap-2">
-        <h3 className="t-title text-[var(--navy)]">For you</h3>
-        <div className="ml-auto flex gap-1.5">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="eyebrow">For you</p>
+        <div className="flex gap-1.5">
           <CarouselArrow dir="prev" disabled={active === 0} onClick={() => goTo(active - 1)} />
           <CarouselArrow dir="next" disabled={active === recs.length - 1} onClick={() => goTo(active + 1)} />
         </div>
@@ -297,28 +316,18 @@ function RecCard({ rec }: { rec: Recommendation }) {
   const t = REC_TONE[rec.tone];
   return (
     <div className="card flex h-full flex-col border-l-4 p-4" style={{ borderLeftColor: t.color }}>
-      <div className="flex items-start gap-3">
-        <span
-          className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: t.soft, color: t.color }}
-        >
-          <RecGlyph icon={rec.icon} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <h4 className="t-heading leading-snug text-[var(--navy)]">{rec.title}</h4>
-            {rec.saving && (
-              <span
-                className="shrink-0 rounded-full px-2 py-0.5 t-label font-semibold tabular"
-                style={{ background: t.soft, color: t.color }}
-              >
-                {rec.saving}
-              </span>
-            )}
-          </div>
-          <p className="mt-1.5 t-caption">{rec.detail}</p>
-        </div>
+      <div className="flex items-start justify-between gap-2">
+        <h4 className="t-heading leading-snug text-[var(--navy)]">{rec.title}</h4>
+        {rec.saving && (
+          <span
+            className="shrink-0 rounded-full px-2 py-0.5 t-label font-semibold tabular"
+            style={{ background: t.soft, color: t.color }}
+          >
+            {rec.saving}
+          </span>
+        )}
       </div>
+      <p className="mt-1.5 t-caption">{rec.detail}</p>
     </div>
   );
 }
@@ -348,20 +357,14 @@ function LightStrip({
   const onOwnPower = gridShare(status) < 15;
   return (
     <button onClick={onClick} className="card card-interactive w-full p-4 text-left">
-      {/* Status header */}
-      <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--navy)] text-white">
-          <HealthGlyph level={health.level} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="t-label text-muted">Status</p>
-          <div className="mt-0.5 flex items-center gap-2">
-            <span
-              className="live-dot inline-block h-2 w-2 shrink-0 rounded-full"
-              style={{ background: c.color }}
-            />
-            <span className="t-heading text-[var(--home)]">{health.title}</span>
-          </div>
+      {/* Status header — no icon, dot carries the color signal */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span
+            className="live-dot inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+            style={{ background: c.color }}
+          />
+          <span className="t-heading text-[var(--home)]">{health.title}</span>
         </div>
         <Chevron />
       </div>
@@ -411,7 +414,6 @@ function SavingsHero({
   mtd,
   comparison,
   batteryRec,
-  label,
   onClick,
 }: {
   month: MonthSummary;
@@ -429,46 +431,40 @@ function SavingsHero({
       : verdict === "worse"
       ? `↑ ${deltaAmt} more than last month`
       : "→ Same as last month";
-  const trendColor =
-    verdict === "better" ? "#6ee7b7" : verdict === "worse" ? "#fca5a5" : "rgba(255,255,255,0.45)";
 
   return (
-    <button onClick={onClick} className="card-navy card-interactive w-full p-6 text-left">
-      <p className="t-label uppercase" style={{ color: "rgba(255,255,255,0.5)" }}>
-        Saved in {label}
-      </p>
-      <div className="mt-2 t-display text-white">{eur(month.saved_eur, 0)}</div>
-      <p className="mt-2 t-caption" style={{ color: "rgba(255,255,255,0.6)" }}>
+    <button onClick={onClick} className="card card-interactive w-full p-5 text-left">
+      <div className="t-display text-[var(--battery)]">{eur(month.saved_eur, 0)}</div>
+      <p className="mt-1.5 t-caption">
         {eur(month.saved_from_solar_eur, 0)} from your own solar
         {month.feed_in_credit_eur > 0 && (
           <> · {eur(month.feed_in_credit_eur, 0)} feed-in credit</>
         )}.
       </p>
 
-      <div
-        className="mt-5 grid grid-cols-2 border-t pt-4"
-        style={{ borderColor: "rgba(255,255,255,0.12)" }}
-      >
+      <div className="mt-4 grid grid-cols-2 border-t pt-4">
         <div className="pr-4">
-          <p className="t-label" style={{ color: "rgba(255,255,255,0.45)" }}>Bill so far</p>
-          <p className="t-metric text-white">{eur(mtd.so_far_eur, 0)}</p>
+          <p className="eyebrow mb-0.5">Bill so far</p>
+          <p className="t-metric text-[var(--home)]">{eur(mtd.so_far_eur, 0)}</p>
         </div>
-        <div className="pl-4" style={{ borderLeft: "1px solid rgba(255,255,255,0.12)" }}>
-          <p className="t-label" style={{ color: "rgba(255,255,255,0.45)" }}>Likely total</p>
-          <p className="t-metric text-white">~{eur(mtd.likely_total_eur, 0)}</p>
+        <div className="border-l pl-4">
+          <p className="eyebrow mb-0.5">Likely total</p>
+          <p className="t-metric text-[var(--home)]">~{eur(mtd.likely_total_eur, 0)}</p>
         </div>
       </div>
 
-      <p className="mt-4 t-label" style={{ color: trendColor }}>{trendText}</p>
+      <p
+        className="mt-3 t-label"
+        style={{ color: verdict === "better" ? "var(--battery)" : verdict === "worse" ? "var(--danger)" : "var(--muted)" }}
+      >
+        {trendText}
+      </p>
 
       {batteryRec && (
-        <div
-          className="mt-4 rounded-xl px-3 py-2.5"
-          style={{ background: "rgba(255,255,255,0.08)" }}
-        >
-          <p className="t-caption" style={{ color: "rgba(255,255,255,0.7)" }}>
+        <div className="mt-3 rounded-xl bg-[var(--background)] px-3 py-2.5">
+          <p className="t-caption">
             💡 Add a battery — save about{" "}
-            <span className="font-semibold text-white">€{batteryRec.annual_eur}/yr</span> more.
+            <span className="font-semibold text-[var(--navy)]">€{batteryRec.annual_eur}/yr</span> more.
           </p>
         </div>
       )}
@@ -485,17 +481,11 @@ function EquipmentSection({
   onOpen: (unit: string) => void;
 }) {
   return (
-    <section>
-      <div className="mb-3 flex items-end justify-between">
-        <h3 className="t-title text-[var(--home)]">Your equipment</h3>
-        <ConditionLegend />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {units.map((u) => (
-          <EquipmentCard key={u.key} unit={u} onClick={() => onOpen(u.key)} />
-        ))}
-      </div>
-    </section>
+    <div className="grid grid-cols-2 gap-3">
+      {units.map((u) => (
+        <EquipmentCard key={u.key} unit={u} onClick={() => onOpen(u.key)} />
+      ))}
+    </div>
   );
 }
 
@@ -590,21 +580,18 @@ function WeekAhead({ weather, onClick }: { weather: WeatherOutlook; onClick: () 
   return (
     <button
       onClick={onClick}
-      className="card card-interactive w-full border-l-4 p-5 text-left"
+      className="card card-interactive w-full border-l-4 p-4 text-left"
       style={{ borderLeftColor: c.color }}
     >
-      <div className="mb-2 flex items-center justify-between">
-        <span className="t-label font-medium uppercase tracking-wide text-muted">This week</span>
-        <Chevron />
-      </div>
       <div className="flex items-center gap-4">
-        <Sky icon={icon} size={44} />
+        <Sky icon={icon} size={40} />
         <div className="min-w-0 flex-1">
           <h3 className="t-heading leading-snug text-[var(--home)]">
             {weather.recommendation.title}
           </h3>
-          <p className="mt-1 t-caption">about {weather.avg_sun_hours}h of sun a day</p>
+          <p className="mt-0.5 t-caption">about {weather.avg_sun_hours}h of sun a day</p>
         </div>
+        <Chevron />
       </div>
     </button>
   );
