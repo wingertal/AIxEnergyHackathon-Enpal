@@ -350,8 +350,9 @@ function LightStrip({
 }) {
   const c = HEALTH_COLORS[health.level];
   const onOwnPower = gridShare(status) < 15;
+  const arcClass = health.level === "great" ? "card-arc-border" : health.level === "warning" ? "card-arc-border-warn" : "card-arc-border-alert";
   return (
-    <button onClick={onClick} className="card card-arc-border card-interactive w-full p-4 text-left" style={{ '--arc-c': c.color } as React.CSSProperties}>
+    <button onClick={onClick} className={`card ${arcClass} card-interactive w-full p-4 text-left`} style={{ '--arc-c': c.color } as React.CSSProperties}>
       {/* Status header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

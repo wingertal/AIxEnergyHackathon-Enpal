@@ -161,10 +161,11 @@ function StatusPanel({
 }) {
   const c = HEALTH_COLORS[health.level];
   const onOwnPower = (status.mix.sources.find((s) => s.key === "grid")?.pct ?? 0) < 15;
+  const arcClass = health.level === "great" ? "card-arc-border" : health.level === "warning" ? "card-arc-border-warn" : "card-arc-border-alert";
   return (
     <section>
       <p className="eyebrow mb-3">Energy status</p>
-      <div className="card card-arc-border p-6" style={{ '--arc-c': c.color } as React.CSSProperties}>
+      <div className={`card ${arcClass} p-6`} style={{ '--arc-c': c.color } as React.CSSProperties}>
         {/* Header row — matches mobile LightStrip */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
